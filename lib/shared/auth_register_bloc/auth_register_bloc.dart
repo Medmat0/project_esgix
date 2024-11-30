@@ -12,10 +12,10 @@ part 'auth_register_state.dart';
 
 class AuthRegisterBloc extends Bloc<AuthRegisterEvent, AuthRegisterState> {
   AuthRegisterBloc() : super(const AuthRegisterState()) {
-    on<PostAuthRegister>(_onAddUser);
+    on<PostAuthRegisterEvent>(_onAddUser);
   }
 
-  void _onAddUser(PostAuthRegister event,
+  void _onAddUser(PostAuthRegisterEvent event,
       Emitter<AuthRegisterState> emit) async {
     emit(state.copyWith(status: AuthRegisterStatus.addingUser));
     try {
@@ -35,18 +35,12 @@ class AuthRegisterBloc extends Bloc<AuthRegisterEvent, AuthRegisterState> {
     Dio dio = Dio();
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers['x-api-key'] =   dotenv.env['API_KEY'];
-
-    try {
       final response = await dio.post(
           "${dotenv.env['BASE_URL']}auth/register",
           data: user.toJson()
       );
       return User.fromJson(response.data);
-    } on DioException catch (e) {
-      // Imprimez les détails de l'erreur
-      print('Erreur Dio: ${e.response?.statusCode}');
-      print('Message d\'erreur: ${e.response?.data}');
-      throw e; // Ou gérez l'erreur comme vous le souhaitez
-    }
   }
+
+
 }

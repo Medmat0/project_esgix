@@ -5,8 +5,8 @@ sealed class AuthRegisterEvent {
   const AuthRegisterEvent();
 }
 
-class PostAuthRegister extends AuthRegisterEvent {
+class PostAuthRegisterEvent extends AuthRegisterEvent {
   final User user;
 
-  const PostAuthRegister({required this.user});
+  const PostAuthRegisterEvent({required this.user});
 }

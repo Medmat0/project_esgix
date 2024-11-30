@@ -25,6 +25,10 @@ class SessionManager {
     return token;
   }
 
+  String getBearerToken(){
+    return "Bearer ${token!}";
+  }
+
   // Vérifie si un token est défini
   bool get hasToken => token != null;
 }
