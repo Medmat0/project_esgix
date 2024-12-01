@@ -62,3 +62,27 @@ class PostOffsetEvent extends PostEvent {
     required this.page,
   });
 }
+
+class PostByUserEvent extends PostEvent {
+  final int page;
+  final int offset;
+  final String userId;
+
+  const PostByUserEvent({
+    required this.offset,
+    required this.page,
+    required this.userId,
+  });
+}
+
+class PostByUserLikedEvent extends PostEvent {
+  final int page;
+  final int offset;
+  final String userId;
+
+  const PostByUserLikedEvent({
+    required this.offset,
+    required this.page,
+    required this.userId,
+  });
+}

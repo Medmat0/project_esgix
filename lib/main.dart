@@ -1,10 +1,8 @@
-import 'package:esgix_project/model/user.dart';
-import 'package:esgix_project/model/user_login.dart';
+import 'package:esgix_project/shared/post_bloc/post_bloc.dart';
+import 'package:esgix_project/shared/user_bloc/user_bloc.dart';
 import 'package:esgix_project/singleton/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:esgix_project/shared/auth_login_bloc/auth_login_bloc.dart';
-import 'package:esgix_project/shared/auth_register_bloc/auth_register_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
@@ -20,8 +18,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthLoginBloc()),
-        BlocProvider(create: (context) => AuthRegisterBloc()),
+        BlocProvider(create: (context) => UserBloc()),
+        BlocProvider(create: (context) => PostBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -78,17 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           _incrementCounter();
 
-          // Accès au bloc depuis le contexte
-          final authBloc = BlocProvider.of<AuthLoginBloc>(context);
-
-          // Création de l'utilisateur à envoyer
-          var user = UserLogin(
-            email: "test11eeedffdf45eeee6@gmail.com",
-            password: "Totoro2233",
-          );
-          
-          authBloc.add(PostAuthLogin(userLogin: user));
-          print(SessionManager.instance.getToken());
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

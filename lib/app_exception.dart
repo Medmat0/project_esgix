@@ -15,6 +15,8 @@ class AuthException extends AppException {
   });
 }
 
+class UserException extends AppException {}
+
 class PostException extends AppException {
   final String? message;
 

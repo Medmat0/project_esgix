@@ -12,6 +12,9 @@ enum PostBlocStatus {
   updatePostSuccess,
   searchPostSuccess,
   offsetPagePostSuccess,
+  offsetPagePostByUserSuccess,
+  offsetPagePostByUserLikedSuccess,
+  errorNotLogin,
 }
 
 final class PostState {
