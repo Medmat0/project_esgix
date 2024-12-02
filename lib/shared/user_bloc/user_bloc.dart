@@ -10,21 +10,19 @@ import '../../services/error_service.dart';
 import '../../singleton/session_manager.dart';
 
 part 'user_event.dart';
+
 part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(const UserState()) {
-    on<UserEvent>((event, emit) {
-      on<UserRegisterEvent>(_onAddUser);
-      on<UserLoginEvent>(_onLoginUser);
-      on<UserByIdEvent>(_onFindUserById);
-      on<UserByLikePostEvent>(_onFindUserByLikePost);
-      on<UserUpdateEvent>(_onUpdateUser);
-    });
+    on<UserRegisterEvent>(_onAddUser);
+    on<UserLoginEvent>(_onLoginUser);
+    on<UserByIdEvent>(_onFindUserById);
+    on<UserByLikePostEvent>(_onFindUserByLikePost);
+    on<UserUpdateEvent>(_onUpdateUser);
   }
 
-  void _onAddUser(UserRegisterEvent  event,
-      Emitter<UserState> emit) async {
+  void _onAddUser(UserRegisterEvent event, Emitter<UserState> emit) async {
     emit(state.copyWith(status: UserBlocStatus.addUser));
     try {
       final userUpdated = await _postRegister(event.user);
@@ -37,7 +35,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
     return;
   }
-
 
   void _onLoginUser(UserLoginEvent event, Emitter<UserState> emit) async {
     emit(state.copyWith(status: UserBlocStatus.loginUser));
@@ -66,7 +63,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return;
   }
 
-  void _onFindUserByLikePost(UserByLikePostEvent event, Emitter<UserState> emit) async {
+  void _onFindUserByLikePost(
+      UserByLikePostEvent event, Emitter<UserState> emit) async {
     emit(state.copyWith(status: UserBlocStatus.findUserByLiked));
     try {
       final users = await _findListUsersByLikedIdPost(event.idPost);
@@ -84,12 +82,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(state.copyWith(status: UserBlocStatus.updateUser));
     try {
       checkIfIHaveTheTokenForPathSecurise();
-      final users = await _updateUser(event);
+      final user = await _updateUser(event);
       emit(state.copyWith(
         status: UserBlocStatus.successUpdateUser,
-        users: users,
+        users: [user],
       ));
-    } on   UnauthorizedPathWithNoToken catch(_){
+    } on UnauthorizedPathWithNoToken catch (_) {
       emit(state.copyWith(status: UserBlocStatus.errorNotLogin));
     } on Exception catch (_) {
       emit(state.copyWith(status: UserBlocStatus.error));
@@ -97,13 +95,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return;
   }
 
-
   Future<User> _postRegister(User user) async {
     final dio = makeTheHeader();
-    final response = await dio.post(
-        "${dotenv.env['BASE_URL']}auth/register",
-        data: user.toJson()
-    );
+    final response = await dio.post("${dotenv.env['BASE_URL']}auth/register",
+        data: user.toJson());
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
     return User.fromJson(response.data);
@@ -116,7 +111,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       'password': password,
     };
     final response =
-    await dio.post("${dotenv.env['BASE_URL']}auth/login", data: data);
+        await dio.post("${dotenv.env['BASE_URL']}auth/login", data: data);
     final json = response.data;
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
@@ -127,36 +122,34 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   Future<User> _findUserById(String idUser) async {
     final dio = makeTheHeader();
-    final response =
-    await dio.get("${dotenv.env['BASE_URL']}user/$idUser");
+    final response = await dio.get("${dotenv.env['BASE_URL']}users/$idUser");
     final statusCode = response.statusCode;
     final json = response.data;
     if (statusCode != 200) whatTypeOfError(statusCode!);
     return User.fromJson(json);
   }
 
-  Future<List<User>>  _findListUsersByLikedIdPost(String idPost) async {
+  Future<List<User>> _findListUsersByLikedIdPost(String idPost) async {
     final dio = makeTheHeader();
     final response =
-    await dio.get("${dotenv.env['BASE_URL']}likes/$idPost/users");
+        await dio.get("${dotenv.env['BASE_URL']}likes/$idPost/users");
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['users'] as List;
+    final jsonList = response.data as List;
     return jsonList.map((jsonElement) => User.fromJson(jsonElement)).toList();
   }
 
-  Future<List<User>>  _updateUser(UserUpdateEvent user ) async {
+  Future<User> _updateUser(UserUpdateEvent user) async {
     final dio = makeTheHeaderWithToken();
     final data = {
       if (user.username != null) 'username': user.username,
-      if(user.avatar != null) 'avatar': user.avatar,
-      if(user.description != null) 'description': user.description,
+      if (user.avatar != null) 'avatar': user.avatar,
+      if (user.description != null) 'description': user.description,
     };
-    final response =
-    await dio.put("${dotenv.env['BASE_URL']}/users/${user.userId}", data: data);
+    final response = await dio
+        .put("${dotenv.env['BASE_URL']}users/${user.userId}", data: data);
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['users'] as List;
-    return jsonList.map((jsonElement) => User.fromJson(jsonElement)).toList();
+    return User.fromJson(response.data);
   }
 }

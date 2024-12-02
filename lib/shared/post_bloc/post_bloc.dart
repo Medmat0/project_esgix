@@ -188,7 +188,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     checkIfIHaveTheTokenForPathSecurise();
     final dio = makeTheHeaderWithToken();
     final response = await dio.post(
-      "${dotenv.env['BASE_URL']}posts/register",
+      "${dotenv.env['BASE_URL']}posts",
       data: post.toJson(),
     );
     return Post.fromJson(response.data);
@@ -206,7 +206,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   Future<Post> _findOnPostById(String id) async {
-    checkIfIHaveTheTokenForPathSecurise();
     final dio = makeTheHeader();
     final response = await dio.get(
       "${dotenv.env['BASE_URL']}posts/$id",
@@ -229,24 +228,25 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Future<bool> _likeAPost(String id) async {
     checkIfIHaveTheTokenForPathSecurise();
     final dio = makeTheHeaderWithToken();
-    final response = await dio.put(
+    final response = await dio.post(
       "${dotenv.env['BASE_URL']}likes/$id",
     );
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
     return true;
+
   }
 
   Future<List<Post>> _searchPost(String content) async {
-    checkIfIHaveTheTokenForPathSecurise();
     final dio = makeTheHeader();
     final response = await dio.get(
       "${dotenv.env['BASE_URL']}search?query=$content",
     );
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['posts'] as List;
-    return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
+    final jsonList = response.data['data'] as List;
+    final test = jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
+    return test;
   }
 
   Future<List<Post>> _getPostByOffset(int page, int offset) async {
@@ -256,7 +256,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     );
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['posts'] as List;
+    final jsonList = response.data['data'] as List;
     return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
 
@@ -268,7 +268,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     );
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['posts'] as List;
+    final jsonList = response.data['data'] as List;
     return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
 

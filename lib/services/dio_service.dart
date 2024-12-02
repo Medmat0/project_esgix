@@ -14,8 +14,7 @@ Dio makeTheHeaderWithToken() {
   Dio dio = Dio();
   dio.options.headers['content-Type'] = 'application/json';
   dio.options.headers['x-api-key'] = dotenv.env['API_KEY'];
-  dio.options.headers['Authorization'] =
-      'Bearer ${SessionManager.instance.getBearerToken()}';
+  dio.options.headers['Authorization'] = SessionManager.instance.getBearerToken();
   return dio;
 }
 
