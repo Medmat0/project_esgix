@@ -1,18 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:esgix_project/app_exception.dart';
 import 'package:esgix_project/model/post.dart';
+import 'package:esgix_project/services/posts/posts_repository/posts_repository.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import '../../services/dio_service.dart';
-import '../../services/error_service.dart';
 
 part 'post_event.dart';
 
 part 'post_state.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
-  PostBloc() : super(const PostState()) {
+  final PostsRepository postsRepository;
+
+  PostBloc({required this.postsRepository}) : super(const PostState()) {
     on<PostAddEvent>(_onAddPost);
     on<PostDeleteEvent>(_onDeletePost);
     on<PostFindOneEvent>(_onFindOnePost);
@@ -27,7 +26,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Future<void> _onAddPost(PostAddEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      final userPostAdd = await _addPost(event.post);
+      final userPostAdd = await postsRepository.savePost(event.post);
       emit(state.copyWith(
         status: PostBlocStatus.addPostSuccess,
         posts: [userPostAdd],
@@ -44,7 +43,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       PostDeleteEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      await _deletePost(event.idPost);
+      await postsRepository.deletePost(event.idPost);
       emit(state.copyWith(
         status: PostBlocStatus.deletePostSuccess,
       ));
@@ -62,7 +61,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       PostFindOneEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      await _findOnPostById(event.idPost);
+      await postsRepository.findOnPostById(event.idPost);
       emit(state.copyWith(
         status: PostBlocStatus.findOnePostSuccess,
       ));
@@ -80,7 +79,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       PostUpdateEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      final postUpdate = await _updatePost(event.post);
+      final postUpdate = await postsRepository.updatePost(event.post);
       emit(state.copyWith(
         status: PostBlocStatus.updatePostSuccess,
         posts: [postUpdate],
@@ -98,7 +97,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Future<void> _onLikePost(PostLikeEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      await _likeAPost(event.id);
+      await postsRepository.likeAPost(event.id);
       emit(state.copyWith(
         status: PostBlocStatus.findOnePostSuccess,
       ));
@@ -116,7 +115,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       PostSearchEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      final posts = await _searchPost(event.content);
+      final posts = await postsRepository.searchPost(event.content);
       emit(state.copyWith(
         status: PostBlocStatus.searchPostSuccess,
         posts: posts,
@@ -135,7 +134,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       PostOffsetEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
-      final posts = await _getPostByOffset(event.page, event.offset);
+      final posts = await postsRepository.getPostByOffset(event.page, event.offset);
       emit(state.copyWith(
         status: PostBlocStatus.offsetPagePostSuccess,
         posts: posts,
@@ -153,7 +152,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
       final posts =
-          await _getPostsByUser(event.page, event.offset, event.userId);
+          await postsRepository.getPostsByUser(event.page, event.offset, event.userId);
       emit(state.copyWith(
         status: PostBlocStatus.offsetPagePostByUserSuccess,
         posts: posts,
@@ -171,7 +170,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     emit(state.copyWith(status: PostBlocStatus.loading));
     try {
       final posts =
-          await _getPostsByUserLiked(event.page, event.offset, event.userId);
+          await postsRepository.getPostsByUserLiked(event.page, event.offset, event.userId);
       emit(state.copyWith(
         status: PostBlocStatus.offsetPagePostByUserLikedSuccess,
         posts: posts,
@@ -182,105 +181,5 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         exception: PostException(message: "don't success to have  a posts"),
       ));
     }
-  }
-
-  Future<Post> _addPost(Post post) async {
-    checkIfIHaveTheTokenForPathSecurise();
-    final dio = makeTheHeaderWithToken();
-    final response = await dio.post(
-      "${dotenv.env['BASE_URL']}posts",
-      data: post.toJson(),
-    );
-    return Post.fromJson(response.data);
-  }
-
-  Future<bool> _deletePost(String id) async {
-    checkIfIHaveTheTokenForPathSecurise();
-    final dio = makeTheHeaderWithToken();
-    final response = await dio.delete(
-      "${dotenv.env['BASE_URL']}posts/$id",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    return true;
-  }
-
-  Future<Post> _findOnPostById(String id) async {
-    final dio = makeTheHeader();
-    final response = await dio.get(
-      "${dotenv.env['BASE_URL']}posts/$id",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    return Post.fromJson(response.data);
-  }
-
-  Future<Post> _updatePost(Post post) async {
-    checkIfIHaveTheTokenForPathSecurise();
-    final dio = makeTheHeaderWithToken();
-    final response = await dio.put("${dotenv.env['BASE_URL']}posts/${post.id}",
-        data: post.toJson());
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    return Post.fromJson(response.data);
-  }
-
-  Future<bool> _likeAPost(String id) async {
-    checkIfIHaveTheTokenForPathSecurise();
-    final dio = makeTheHeaderWithToken();
-    final response = await dio.post(
-      "${dotenv.env['BASE_URL']}likes/$id",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    return true;
-
-  }
-
-  Future<List<Post>> _searchPost(String content) async {
-    final dio = makeTheHeader();
-    final response = await dio.get(
-      "${dotenv.env['BASE_URL']}search?query=$content",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['data'] as List;
-    final test = jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
-    return test;
-  }
-
-  Future<List<Post>> _getPostByOffset(int page, int offset) async {
-    final dio = makeTheHeader();
-    final response = await dio.get(
-      "${dotenv.env['BASE_URL']}posts?page=$page&offset=$offset",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['data'] as List;
-    return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
-  }
-
-  Future<List<Post>> _getPostsByUser(
-      int page, int offset, String userId) async {
-    final dio = makeTheHeader();
-    final response = await dio.get(
-      "${dotenv.env['BASE_URL']}user/$userId/posts?page=$page&offset=$offset",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['data'] as List;
-    return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
-  }
-
-  Future<List<Post>> _getPostsByUserLiked(
-      int page, int offset, String userId) async {
-    final dio = makeTheHeader();
-    final response = await dio.get(
-      "${dotenv.env['BASE_URL']}user/$userId/likes?page=$page&offset=$offset",
-    );
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['posts'] as List;
-    return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
 }
