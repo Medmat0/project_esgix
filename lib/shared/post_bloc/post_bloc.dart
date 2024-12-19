@@ -11,6 +11,12 @@ part 'post_state.dart';
 class PostBloc extends Bloc<PostEvent, PostState> {
   final PostsRepository postsRepository;
 
+  /*
+  PostManagementBloc: Handles adding, updating, and deleting posts.
+PostInteractionBloc: Handles liking posts and searching posts.
+PostPaginationBloc: Handles pagination and fetching posts by user or liked by user.x
+   */
+
   PostBloc({required this.postsRepository}) : super(const PostState()) {
     on<PostAddEvent>(_onAddPost);
     on<PostDeleteEvent>(_onDeletePost);

@@ -6,6 +6,8 @@ import 'package:esgix_project/services/user/users_data_source/api_users_data_sou
 import 'package:esgix_project/services/user/users_repository/users_repository.dart';
 import 'package:esgix_project/shared/post_bloc/post_bloc.dart';
 import 'package:esgix_project/shared/user_bloc/user_bloc.dart';
+import 'package:esgix_project/shared/user_management_bloc/user_management_bloc.dart';
+import 'package:esgix_project/shared/user_query_bloc/user_query_bloc.dart';
 import 'package:esgix_project/singleton/session_manager.dart';
 import 'package:esgix_project/view/login_view_screen.dart';
 import 'package:esgix_project/view/register_view_screen.dart';
@@ -27,7 +29,14 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (context) => UserBloc(
+            create: (context) => UserManagementBloc(
+                  usersRepository: UsersRepository(
+                    remoteDataSource: ApiUsersDataSource(),
+                    localUsersDataSource: FakeLocalUsersDataSource(),
+                  ),
+                )),
+        BlocProvider(
+            create: (context) => UserQueryBloc(
                   usersRepository: UsersRepository(
                     remoteDataSource: ApiUsersDataSource(),
                     localUsersDataSource: FakeLocalUsersDataSource(),
