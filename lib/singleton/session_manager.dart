@@ -11,9 +11,28 @@ class SessionManager {
   // Token utilisateur (modifiable)
   String? token;
 
+  String? userId;
+
   // Définit ou met à jour le token
   void setToken(String? newToken) {
     token = newToken;
+  }
+
+  void setUserId(String? newUserId) {
+    userId = newUserId;
+  }
+
+  String? getUserId(){
+    return userId;
+  }
+
+  void clearUserId() {
+    userId = null;
+  }
+
+  void clearAll(){
+    token = null;
+    userId = null;
   }
 
   // Supprime le token

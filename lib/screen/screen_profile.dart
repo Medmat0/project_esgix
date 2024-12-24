@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../widget/app_bar_widget.dart';
 import '../widget/base_screen.dart';
+import '../widget/profile_widget.dart';
 
 class ScreenProfile extends StatefulWidget {
   const ScreenProfile({super.key});
@@ -22,9 +23,7 @@ class ScreenProfileState extends State<ScreenProfile> {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: AppBarWidget(name: 'Profile'),
-      body: Center(
-        child: Text('Profile'),
-      ),
+      body: ProfileWidget(),
       bottomNavigationBar: BaseScreen(),
     );
   }

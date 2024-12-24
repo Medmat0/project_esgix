@@ -34,6 +34,7 @@ class ApiUsersDataSource implements UsersDataSource {
     if (statusCode != 200) whatTypeOfError(statusCode!);
     final user = AuthLoginDto.fromJson(json);
     SessionManager.instance.setToken(user.token);
+    SessionManager.instance.setUserId(user.record.id);
     return true;
   }
 

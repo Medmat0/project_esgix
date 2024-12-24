@@ -46,13 +46,15 @@ class TweetFeedState extends State<TweetFeed> {
           itemBuilder: (context, index) {
             if (index < state.posts.length) {
               return TweetWidget(
+                id: state.posts[index].id ?? '',
                 profileImageUrl: state.posts[index].author!.avatar,
                 username: state.posts[index].author!.username,
                 handle: state.posts[index].author!.username,
                 timeAgo: state.posts[index].createdAt.toString(),
                 content: state.posts[index].content,
-                likes: 0,
-                comments: 0,
+                likes: state.posts[index].likeCount ?? 0,
+                comments: state.posts[index].commentCount ?? 0,
+                imageUrl: state.posts[index].imageUrl,
               );
             }
             return const Center(child: CircularProgressIndicator());

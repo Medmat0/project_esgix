@@ -24,7 +24,6 @@ class UsersRepository {
 
   Future<bool> loginUser(String email, String password) async {
     try {
-      //localUsersDataSource.addUser(user);
       return await remoteDataSource.loginUser(email, password);
     } catch (error) {
       return false;

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
+  static Future<void> navigateTo(BuildContext context) {
+    return Navigator.pushNamed(context, '/register');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
