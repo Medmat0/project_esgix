@@ -1,11 +1,14 @@
+import 'package:esgix_project/screen/screen_add_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../screen/screen_profile_everyone.dart';
+import '../screen/screen_tweet.dart';
 import '../shared/post_bloc/post_bloc.dart';
 import '../screen/login_view_screen.dart';
 
 class TweetWidget extends StatefulWidget {
   final String id;
+  final String userId;
   final String profileImageUrl;
   final String username;
   final String handle;
@@ -18,6 +21,7 @@ class TweetWidget extends StatefulWidget {
   const TweetWidget({
     super.key,
     required this.id,
+    required this.userId,
     required this.profileImageUrl,
     required this.username,
     required this.handle,
@@ -35,8 +39,8 @@ class TweetWidget extends StatefulWidget {
 class TweetWidgetState extends State<TweetWidget> {
   late int likes;
   late int comments;
-  bool isLiked = false; // Variable d'état pour le like
-  bool isCommented = false; // Variable d'état pour le commentaire
+  bool isLiked = false;
+  bool isCommented = false;
 
   @override
   void initState() {
@@ -54,75 +58,87 @@ class TweetWidgetState extends State<TweetWidget> {
             const SnackBar(content: Text("Erreur lors de l'ajout du like")),
           );
         }
-
         if (state.status == PostBlocStatus.errorNotLogin) {
           LoginScreen.navigateTo(context);
         }
       },
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                backgroundImage: widget.profileImageUrl.isNotEmpty
-                    ? NetworkImage(widget.profileImageUrl)
-                    : const AssetImage('egg.jpeg') as ImageProvider,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          widget.username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '@${widget.handle} · ${widget.timeAgo}',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    if (widget.imageUrl != null &&
-                        widget.imageUrl!.isNotEmpty &&
-                        isImageUrl(widget.imageUrl!))
-                      Image.network(widget.imageUrl!),
-                    Text(widget.content),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildIconText(Icons.comment, comments, addCommentOnTweet, isCommented),
-                        _buildIconText(Icons.favorite, likes, addLikeOnTweet, isLiked),
-                      ],
-                    ),
-                  ],
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => ScreenTweet.navigateTo(context, widget.id),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () =>  ScreenProfileEveryone.navigateTo(context, widget.userId),
+                  behavior: HitTestBehavior.opaque,
+                  child: CircleAvatar(
+                    backgroundImage: widget.profileImageUrl.isNotEmpty
+                        ? NetworkImage(widget.profileImageUrl)
+                        : const AssetImage('egg.jpeg') as ImageProvider,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            widget.username,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            '@${widget.handle} · ${widget.timeAgo}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      if (widget.imageUrl != null &&
+                          widget.imageUrl!.isNotEmpty &&
+                          _isImageUrl(widget.imageUrl!))
+                        Image.network(widget.imageUrl!),
+                      Text(widget.content),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildInteractionButton(
+                            icon: Icons.comment,
+                            count: comments,
+                            onPressed: _handleComment,
+                            isSelected: isCommented,
+                          ),
+                          _buildInteractionButton(
+                            icon: Icons.favorite,
+                            count: likes,
+                            onPressed: _handleLike,
+                            isSelected: isLiked,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  bool isImageUrl(String url) {
+  bool _isImageUrl(String url) {
     final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-    final urlExtension = url.split('.').last.toLowerCase();
-    return imageExtensions.contains(urlExtension);
+    return imageExtensions.contains(url.split('.').last.toLowerCase());
   }
 
-  void addLikeOnTweet() {
+  void _handleLike() {
     BlocProvider.of<PostBloc>(context).add(PostLikeEvent(id: widget.id));
     setState(() {
       isLiked = !isLiked;
@@ -130,27 +146,37 @@ class TweetWidgetState extends State<TweetWidget> {
     });
   }
 
-  void addCommentOnTweet() {
+  void _handleComment() {
+    ScreenAddPost.navigateTo(context, widget.id);
     setState(() {
       isCommented = !isCommented;
       comments += isCommented ? 1 : -1;
     });
   }
 
-  Widget _buildIconText(IconData icon, int count, Function() onPressed, bool isSelected) {
-    return Row(
-      children: [
-        IconButton(
-          color: isSelected ? Colors.blue : Colors.grey,
-          onPressed: onPressed,
-          icon: Icon(icon, size: 20),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          count.toString(),
-          style: const TextStyle(color: Colors.grey),
-        ),
-      ],
+  Widget _buildInteractionButton({
+    required IconData icon,
+    required int count,
+    required VoidCallback onPressed,
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: onPressed,
+      behavior: HitTestBehavior.opaque,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected ? Colors.blue : Colors.grey,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            count.toString(),
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
     );
   }
 }

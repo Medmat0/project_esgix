@@ -1,11 +1,9 @@
 import 'package:esgix_project/model/post.dart';
 import 'package:esgix_project/services/posts/posts_data_source/posts_data_source.dart';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../dio_service.dart';
 import '../../error_service.dart';
-
 
 class ApiPostsDataSource implements PostsDataSource {
   @override
@@ -16,7 +14,9 @@ class ApiPostsDataSource implements PostsDataSource {
       "${dotenv.env['BASE_URL']}posts",
       data: post.toJson(),
     );
-    return Post.fromJson(response.data);
+    final statusCode = response.statusCode;
+    if (statusCode != 200) whatTypeOfError(statusCode!);
+    return post;
   }
 
   @override
@@ -112,8 +112,7 @@ class ApiPostsDataSource implements PostsDataSource {
     );
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
-    final jsonList = response.data['posts'] as List;
+    final jsonList = response.data['data'] as List;
     return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
-
 }

@@ -4,10 +4,11 @@ import 'local_posts_data_source.dart';
 
 class FakeLocalPostsDataSource implements LocalPostsDataSource {
 
+  Set<Post> posts = {};
+
 
   @override
   Future<Post> addPost(Post post) {
-    // TODO: implement addPost
     throw UnimplementedError();
   }
 

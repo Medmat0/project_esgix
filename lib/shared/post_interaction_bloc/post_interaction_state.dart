@@ -1,6 +1,31 @@
 part of 'post_interaction_bloc.dart';
 
-@immutable
-sealed class PostInteractionState {}
+enum PostInteractionStatus {
+  initial,
+  loading,
+  success,
+  error,
+  likePostSuccess,
+}
 
-final class PostInteractionInitial extends PostInteractionState {}
+
+class PostInteractionState {
+  final PostInteractionStatus status;
+  final PostException? exception;
+
+  const PostInteractionState({
+    this.status = PostInteractionStatus.initial,
+    this.exception,
+  });
+
+  PostInteractionState copyWith({
+    PostInteractionStatus? status,
+    PostException? exception,
+  }) {
+    return PostInteractionState(
+      status: status ?? this.status,
+      exception: exception ?? this.exception,
+    );
+  }
+}
+

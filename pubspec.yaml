@@ -41,6 +41,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   bloc_test: ^9.1.7
   build_runner: ^2.4.13
+  meta: ^1.9.1
 
 dev_dependencies:
   flutter_test:

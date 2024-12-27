@@ -5,14 +5,21 @@ import '../screen/screen_feed.dart';
 import '../screen/screen_search.dart';
 
 class BaseScreen extends StatefulWidget {
-  const BaseScreen({super.key});
+  final int initialIndex;
+  const BaseScreen({super.key, this.initialIndex = 0});
 
   @override
   State<BaseScreen> createState() => _BaseScreenState();
 }
 
 class _BaseScreenState extends State<BaseScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {

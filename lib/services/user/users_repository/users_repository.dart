@@ -15,7 +15,6 @@ class UsersRepository {
   Future<User> addUser(User user) async {
     try {
       final userSave = await remoteDataSource.addUser(user);
-      localUsersDataSource.addUser(userSave);
       return userSave;
     } catch (error) {
       return user;
@@ -31,34 +30,20 @@ class UsersRepository {
   }
 
   Future<User> findUserById(String id) async {
-    try {
-      final user = await remoteDataSource.findUserById(id);
-      localUsersDataSource.addUser(user);
-      return user;
-    } catch (error) {
-      return localUsersDataSource.findUserById(id);
-    }
+    final user = await remoteDataSource.findUserById(id);
+    return user;
   }
 
   Future<List<User>> findListUsersByLikedIdPost(String idPost) async {
-    try {
-      final users = await remoteDataSource.findListUsersByLikedIdPost(idPost);
-      //localUsersDataSource.addUsers(users);
-      return users;
-    } catch (error) {
-      return localUsersDataSource.findListUsersByLikedIdPost(idPost);
-    }
+    final users = await remoteDataSource.findListUsersByLikedIdPost(idPost);
+    return users;
   }
 
   Future<User> updateUser(String userId, String? username, String? avatar,
       String? description) async {
-    try {
-      final user = await remoteDataSource.updateUser(
-          userId, username, avatar, description);
-      localUsersDataSource.addUser(user);
-      return user;
-    } catch (error) {
-      return localUsersDataSource.findUserById(userId);
-    }
+    final user = await remoteDataSource.updateUser(
+        userId, username, avatar, description);
+    //localUsersDataSource.addUser(user);
+    return user;
   }
 }

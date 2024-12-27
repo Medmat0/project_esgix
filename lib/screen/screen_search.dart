@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:esgix_project/shared/post_pagination_bloc/post_pagination_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../shared/post_bloc/post_bloc.dart';
 import '../widget/app_bar_widget.dart';
 import '../widget/base_screen.dart';
 import '../widget/tweet_widget.dart';
@@ -27,7 +27,7 @@ class ScreenSearchState extends State<ScreenSearch> {
     if (searchText.isEmpty) {
       return;
     }
-    BlocProvider.of<PostBloc>(context).add(PostSearchEvent(content: searchText));
+    BlocProvider.of<PostPaginationBloc>(context).add(PostPaginationSearchEvent(content: searchText));
   }
 
   void _onTextChanged(String text) {
@@ -62,13 +62,13 @@ class ScreenSearchState extends State<ScreenSearch> {
             ),
           ),
           Expanded(
-            child: BlocBuilder<PostBloc, PostState>(
+            child: BlocBuilder<PostPaginationBloc, PostPaginationState>(
               builder: (context, state) {
-                if (state.status == PostBlocStatus.loading && state.posts.isEmpty) {
+                if (state.status == PostPaginationStatus.loading && state.posts.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state.status == PostBlocStatus.error && state.posts.isEmpty) {
+                if (state.status == PostPaginationStatus.error && state.posts.isEmpty) {
                   return const Center(child: Text('Failed to fetch posts'));
                 }
 
@@ -89,6 +89,7 @@ class ScreenSearchState extends State<ScreenSearch> {
                       likes: state.posts[index].likeCount ?? 0,
                       comments: state.posts[index].commentCount ?? 0,
                       imageUrl: state.posts[index].imageUrl,
+                      userId: state.posts[index].author!.id ?? '',
                     );
                   },
                 );
@@ -97,7 +98,7 @@ class ScreenSearchState extends State<ScreenSearch> {
           ),
         ],
       ),
-      bottomNavigationBar: const BaseScreen(),
+      bottomNavigationBar: const BaseScreen(initialIndex: 1,),
     );
   }
 }

@@ -35,6 +35,10 @@ class ApiUsersDataSource implements UsersDataSource {
     final user = AuthLoginDto.fromJson(json);
     SessionManager.instance.setToken(user.token);
     SessionManager.instance.setUserId(user.record.id);
+    SessionManager.instance.setUserName(user.record.username);
+    SessionManager.instance.setUserAvatar(user.record.avatar);
+    SessionManager.instance.setUserDescription(user.record.description);
+    SessionManager.instance.setEmail(user.record.email);
     return true;
   }
 
