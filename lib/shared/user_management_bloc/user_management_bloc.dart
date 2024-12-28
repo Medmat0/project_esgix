@@ -30,8 +30,11 @@ class UserManagementBloc
         status: UserManagementStatus.successAddingUser,
         user: userInsert,
       ));
-    } on Exception catch (_) {
-      emit(state.copyWith(status: UserManagementStatus.error));
+    } on AppException catch (e) {
+      emit(state.copyWith(
+        status: UserManagementStatus.error,
+        errorMessage: e.message,
+      ));
     }
     return;
   }

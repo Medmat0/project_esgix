@@ -1,8 +1,10 @@
 
+import 'package:dio/dio.dart';
 import 'package:esgix_project/model/user.dart';
 import 'package:esgix_project/services/user/users_data_source/users_data_source.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../../../app_exception.dart';
 import '../../../model/auth_login_dto.dart';
 import '../../../singleton/session_manager.dart';
 import '../../dio_service.dart';
@@ -12,12 +14,22 @@ class ApiUsersDataSource implements UsersDataSource {
 
   @override
   Future<User> addUser(User user) async {
-    final dio = makeTheHeader();
-    final response = await dio.post("${dotenv.env['BASE_URL']}auth/register",
-        data: user.toJson());
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    return User.fromJson(response.data);
+
+      final dio = makeTheHeader();
+      final response = await dio.post("${dotenv.env['BASE_URL']}auth/register",
+          data: user.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),);
+      final statusCode = response.statusCode;
+      if(statusCode != 200) {
+        String apiMessage = response.data["message"] ?? "Unknown error occurred.";
+        throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
+      }
+      return User.fromJson(response.data);
+
   }
 
   @override

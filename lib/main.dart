@@ -17,10 +17,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
-  SessionManager.instance;
-  runApp(const MyApp());
+
+  try {
+    await dotenv.load(fileName: ".env");
+    SessionManager.instance;
+    runApp(const MyApp());
+  } catch (e) {
+    throw Exception('Error loading .env file: $e');
+  }
+  //await dotenv.load(fileName: '.env');
+
 }
 
 class MyApp extends StatelessWidget {
@@ -58,7 +66,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        initialRoute: '/tweet_feed',
+        initialRoute: '/login',
         routes: {
           '/login': (context) => LoginScreen(),
           '/register': (context) => const RegisterScreen(),

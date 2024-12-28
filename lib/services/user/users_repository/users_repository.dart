@@ -1,6 +1,7 @@
 import 'package:esgix_project/services/user/local_users_data_source/local_users_data_source.dart';
 import 'package:esgix_project/services/user/users_data_source/users_data_source.dart';
 
+import '../../../app_exception.dart';
 import '../../../model/user.dart';
 
 class UsersRepository {
@@ -13,12 +14,13 @@ class UsersRepository {
   });
 
   Future<User> addUser(User user) async {
+
     try {
       final userSave = await remoteDataSource.addUser(user);
       localUsersDataSource.addUser(userSave);
       return userSave;
-    } catch (error) {
-      return user;
+    } on AppException catch (e) {
+      throw e;
     }
   }
 

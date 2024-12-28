@@ -1,4 +1,6 @@
 class AppException implements Exception {
+  final String? message;
+  AppException({this.message});
   static AppException from(dynamic exception) {
     if (exception is AppException) return exception;
     return UnknownException();
@@ -8,6 +10,7 @@ class AppException implements Exception {
 class UnknownException extends AppException {}
 
 class AuthException extends AppException {
+  @override
   final String message;
 
   AuthException({
@@ -18,6 +21,7 @@ class AuthException extends AppException {
 class UserException extends AppException {}
 
 class PostException extends AppException {
+  @override
   final String? message;
 
   PostException({
@@ -26,6 +30,7 @@ class PostException extends AppException {
 }
 
 class UnauthorizedPathWithNoToken extends AppException {
+  @override
   final String? message;
 
   UnauthorizedPathWithNoToken({
@@ -34,6 +39,7 @@ class UnauthorizedPathWithNoToken extends AppException {
 }
 
 class ResourceNotFound extends AppException {
+  @override
   final String? message;
 
   ResourceNotFound({
@@ -50,6 +56,7 @@ class RequestForbidden extends AppException {
 }
 
 class RequestConflict extends AppException {
+  @override
   final String? message;
 
   RequestConflict({
@@ -58,6 +65,7 @@ class RequestConflict extends AppException {
 }
 
 class RequestNoContent extends AppException {
+  @override
   final String? message;
 
   RequestNoContent({
