@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       context.read<UserManagementBloc>().add(UserRegisterEvent(user: user));
     } catch (e) {
-      print(e);
+      throw (e);
     }
   }
 
