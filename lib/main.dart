@@ -1,7 +1,9 @@
 import 'package:esgix_project/screen/login_view_screen.dart';
 import 'package:esgix_project/screen/register_view_screen.dart';
 import 'package:esgix_project/screen/screen_add_post.dart';
+import 'package:esgix_project/screen/screen_edit_profile.dart';
 import 'package:esgix_project/screen/screen_feed.dart';
+import 'package:esgix_project/screen/screen_modify_post.dart';
 import 'package:esgix_project/screen/screen_people_like_post.dart';
 import 'package:esgix_project/screen/screen_profile_everyone.dart';
 import 'package:esgix_project/screen/screen_search.dart';
@@ -23,6 +25,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'model/user.dart';
+
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
   SessionManager.instance;
@@ -42,48 +46,42 @@ class MyApp extends StatelessWidget {
                     remoteDataSource: ApiUsersDataSource(),
                     localUsersDataSource: FakeLocalUsersDataSource(),
                   ),
-                )
-        ),
+                )),
         BlocProvider(
             create: (context) => UserQueryBloc(
                   usersRepository: UsersRepository(
                     remoteDataSource: ApiUsersDataSource(),
                     localUsersDataSource: FakeLocalUsersDataSource(),
                   ),
-                )
-        ),
+                )),
         BlocProvider(
             create: (context) => PostBloc(
                   postsRepository: PostsRepository(
                     remoteDataSource: ApiPostsDataSource(),
                     localPostsDataSource: FakeLocalPostsDataSource(),
                   ),
-                )
-        ),
+                )),
         BlocProvider(
             create: (context) => PostManagementBloc(
-              postsRepository: PostsRepository(
-                remoteDataSource: ApiPostsDataSource(),
-                localPostsDataSource: FakeLocalPostsDataSource(),
-              ),
-            )
-        ),
+                  postsRepository: PostsRepository(
+                    remoteDataSource: ApiPostsDataSource(),
+                    localPostsDataSource: FakeLocalPostsDataSource(),
+                  ),
+                )),
         BlocProvider(
             create: (context) => PostPaginationBloc(
-              postsRepository: PostsRepository(
-                remoteDataSource: ApiPostsDataSource(),
-                localPostsDataSource: FakeLocalPostsDataSource(),
-              ),
-            )
-        ),
+                  postsRepository: PostsRepository(
+                    remoteDataSource: ApiPostsDataSource(),
+                    localPostsDataSource: FakeLocalPostsDataSource(),
+                  ),
+                )),
         BlocProvider(
             create: (context) => PostOtherBloc(
-              postsRepository: PostsRepository(
-                remoteDataSource: ApiPostsDataSource(),
-                localPostsDataSource: FakeLocalPostsDataSource(),
-              ),
-            )
-        ),
+                  postsRepository: PostsRepository(
+                    remoteDataSource: ApiPostsDataSource(),
+                    localPostsDataSource: FakeLocalPostsDataSource(),
+                  ),
+                )),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -98,13 +96,23 @@ class MyApp extends StatelessWidget {
           '/tweet_feed': (context) => const ScreenFeed(),
           '/search': (context) => const ScreenSearch(),
           '/tweet': (context) => ScreenTweet(
-              id: ModalRoute.of(context)!.settings.arguments as String),
+                id: ModalRoute.of(context)!.settings.arguments as String,
+              ),
           '/add_post': (context) => ScreenAddPost(
-              id: ModalRoute.of(context)!.settings.arguments as String?),
+                id: ModalRoute.of(context)!.settings.arguments as String?,
+              ),
           '/profile-everyone': (context) => ScreenProfileEveryone(
-              id: ModalRoute.of(context)!.settings.arguments as String?),
+                id: ModalRoute.of(context)!.settings.arguments as String?,
+              ),
           '/people_like_post': (context) => ScreenPeopleLikePost(
-              postId: ModalRoute.of(context)!.settings.arguments as String),
+                postId: ModalRoute.of(context)!.settings.arguments as String,
+              ),
+          '/edit-profile': (context) => ScreenEditProfile(
+                user: ModalRoute.of(context)!.settings.arguments as User,
+              ),
+          '/edit-post': (context) => ScreenModifyPost(
+                id: ModalRoute.of(context)!.settings.arguments as String,
+              ),
         },
       ),
     );

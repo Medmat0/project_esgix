@@ -28,13 +28,20 @@ class Post {
       author: json.containsKey('author') && json['author'] != null
           ? User.fromJson(json['author'])
           : null,
-      content: json['content'] as String, // Requis, déclenche une erreur si absent
-      id: json['id'] as String?, // Nullable cast
-      imageUrl: json['imageUrl'] as String?, // Nullable cast
-      parent: json['parent'] as String?, // Nullable cast
-      commentCount: json['commentsCount'] as int?, // Nullable cast
-      likeCount: json['likesCount'] as int?, // Nullable cast
-      createdAt: json['createdAt'] as String?, // Nullable cast
+      content: json['content'] as String,
+      // Requis, déclenche une erreur si absent
+      id: json['id'] as String?,
+      // Nullable cast
+      imageUrl: json['imageUrl'] as String?,
+      // Nullable cast
+      parent: json['parent'] as String?,
+      // Nullable cast
+      commentCount: json['commentsCount'] as int?,
+      // Nullable cast
+      likeCount: json['likesCount'] as int?,
+      // Nullable cast
+      createdAt: json['createdAt'] as String?,
+      // Nullable cast
       updatedAt: json['updatedAt'] as String?, // Nullable cast
     );
   }
@@ -42,7 +49,8 @@ class Post {
   Map<String, dynamic> toJson() {
     return {
       if (author != null) 'author': author,
-      'content': content, // Toujours inclus car requis
+      'content': content,
+      // Toujours inclus car requis
       if (id != null) 'id': id,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (parent != null) 'parent': parent,
@@ -51,5 +59,29 @@ class Post {
       if (createdAt != null) 'createdAt': createdAt,
       if (updatedAt != null) 'updatedAt': updatedAt,
     };
+  }
+
+  Post copyWith({
+    User? author,
+    String? content,
+    String? id,
+    String? imageUrl,
+    String? parent,
+    int? commentCount,
+    int? likeCount,
+    String? createdAt,
+    String? updatedAt,
+  }) {
+    return Post(
+      author: author ?? this.author,
+      content: content ?? this.content,
+      id: id ?? this.id,
+      imageUrl: imageUrl ?? this.imageUrl,
+      parent: parent ?? this.parent,
+      commentCount: commentCount ?? this.commentCount,
+      likeCount: likeCount ?? this.likeCount,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 }

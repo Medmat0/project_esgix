@@ -43,7 +43,6 @@ class UsersRepository {
       String? description) async {
     final user = await remoteDataSource.updateUser(
         userId, username, avatar, description);
-    //localUsersDataSource.addUser(user);
     return user;
   }
 }
