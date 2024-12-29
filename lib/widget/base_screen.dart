@@ -1,4 +1,4 @@
-import 'package:esgix_project/screen/screen_profile.dart';
+import 'package:esgix_project/screen/screen_profile_everyone.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/screen_feed.dart';
@@ -33,7 +33,7 @@ class _BaseScreenState extends State<BaseScreen> {
         ScreenSearch.navigateTo(context);
         break;
       case 2:
-        ScreenProfile.navigateTo(context);
+        ScreenProfileEveryone.navigateTo(context, null);
         break;
     }
   }

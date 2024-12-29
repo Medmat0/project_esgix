@@ -3,7 +3,6 @@ import 'package:esgix_project/screen/register_view_screen.dart';
 import 'package:esgix_project/screen/screen_add_post.dart';
 import 'package:esgix_project/screen/screen_feed.dart';
 import 'package:esgix_project/screen/screen_people_like_post.dart';
-import 'package:esgix_project/screen/screen_profile.dart';
 import 'package:esgix_project/screen/screen_profile_everyone.dart';
 import 'package:esgix_project/screen/screen_search.dart';
 import 'package:esgix_project/screen/screen_tweet.dart';
@@ -98,13 +97,12 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/tweet_feed': (context) => const ScreenFeed(),
           '/search': (context) => const ScreenSearch(),
-          '/profile': (context) => const ScreenProfile(),
           '/tweet': (context) => ScreenTweet(
               id: ModalRoute.of(context)!.settings.arguments as String),
           '/add_post': (context) => ScreenAddPost(
               id: ModalRoute.of(context)!.settings.arguments as String?),
           '/profile-everyone': (context) => ScreenProfileEveryone(
-              id: ModalRoute.of(context)!.settings.arguments as String),
+              id: ModalRoute.of(context)!.settings.arguments as String?),
           '/people_like_post': (context) => ScreenPeopleLikePost(
               postId: ModalRoute.of(context)!.settings.arguments as String),
         },

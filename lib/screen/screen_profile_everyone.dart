@@ -1,4 +1,5 @@
 import 'package:esgix_project/shared/user_query_bloc/user_query_bloc.dart';
+import 'package:esgix_project/singleton/session_manager.dart';
 import 'package:esgix_project/widget/tweet_like_by_user_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,13 +9,14 @@ import '../widget/app_bar_widget.dart';
 import '../widget/base_screen.dart';
 import '../widget/profile_widget.dart';
 import '../widget/tweet_created_by_user_widget.dart';
+import 'login_view_screen.dart';
 
 class ScreenProfileEveryone extends StatefulWidget {
-  final String id;
+  final String? id;
 
   const ScreenProfileEveryone({super.key, required this.id});
 
-  static Future<void> navigateTo(BuildContext context, String id) {
+  static Future<void> navigateTo(BuildContext context, String? id) {
     return Navigator.pushNamed(context, '/profile-everyone', arguments: id);
   }
 
@@ -24,15 +26,29 @@ class ScreenProfileEveryone extends StatefulWidget {
 
 class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
   bool showLikedTweets = true;
+  bool isCurrentUser = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<UserQueryBloc>().add(UserByIdEvent(userId: widget.id));
+    if (widget.id != null) {
+      context.read<UserQueryBloc>().add(UserByIdEvent(userId: widget.id!));
+    } else if (widget.id == null && SessionManager.instance.hasToken) {
+      isCurrentUser = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!SessionManager.instance.hasToken &&
+        widget.id == null &&
+        !isCurrentUser) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        LoginScreen.navigateTo(context);
+      });
+
+      return Container();
+    }
     return Scaffold(
       appBar: const AppBarWidget(name: 'Profile'),
       body: Column(
@@ -73,32 +89,50 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.4,
-                  child: BlocBuilder<UserQueryBloc, UserQueryState>(
-                    builder: (context, state) {
-                      if (state.status == UserQueryStatus.loading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (state.status == UserQueryStatus.error) {
-                        return const Center(child: Text('Failed to fetch user'));
-                      }
-                      if (state.users.isEmpty) {
-                        return const Center(child: Text('No user found'));
-                      }
-                      return _buildProfileWidget(state.users.first);
-                    },
-                  ),
+                  child: widget.id != null
+                      ? BlocBuilder<UserQueryBloc, UserQueryState>(
+                          builder: (context, state) {
+                            if (state.status == UserQueryStatus.loading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state.status == UserQueryStatus.error) {
+                              return const Center(child: Text("Error"));
+                            }
+                            if (state.status == UserQueryStatus.success &&
+                                state.users.isEmpty) {
+                              return const Center(
+                                  child: Text("User not found"));
+                            }
+                            if (state.status == UserQueryStatus.success) {
+                              return _buildProfileWidget(state.users.first);
+                            }
+                            return const SizedBox();
+                          },
+                        )
+                      : _buildProfileWidget(
+                          User(
+                            id: SessionManager.instance.userId,
+                            username: SessionManager.instance.username!,
+                            email: SessionManager.instance.email,
+                            avatar: SessionManager.instance.avatar!,
+                            description: SessionManager.instance.description,
+                          ),
+                        ),
                 ),
                 Expanded(
                   child: showLikedTweets
-                      ? TweetLikeByUserWidget(userId: widget.id)
-                      : TweetCreatedByUserWidget(userId: widget.id),
+                      ? TweetLikeByUserWidget(
+                          userId: widget.id ?? SessionManager.instance.userId!)
+                      : TweetCreatedByUserWidget(
+                          userId: widget.id ?? SessionManager.instance.userId!),
                 ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: const BaseScreen(),
+      bottomNavigationBar: const BaseScreen(initialIndex: 2,),
     );
   }
 

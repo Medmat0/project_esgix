@@ -39,6 +39,9 @@ class ScreenPeopleLikePostState extends State<ScreenPeopleLikePost> {
             if (state.status == UserQueryStatus.error) {
               return const Center(child: Text("Error"));
             }
+            if (state.status == UserQueryStatus.success && state.users.isEmpty) {
+              return const Center(child: Text("No people like this post"));
+            }
             if (state.status == UserQueryStatus.success) {
               return PeopleLikeWidget(peopleLikeList: state.users);
             }
