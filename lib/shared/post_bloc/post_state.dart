@@ -14,7 +14,7 @@ enum PostBlocStatus {
   offsetPagePostSuccess,
   offsetPagePostByUserSuccess,
   offsetPagePostByUserLikedSuccess,
-  errorNotLogin,
+  errorNotLogin, likePostSuccess,
 }
 
 final class PostState {

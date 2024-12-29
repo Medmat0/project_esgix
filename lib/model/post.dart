@@ -6,8 +6,8 @@ class Post {
   final String? id; // Optionnel
   final String? imageUrl; // Optionnel
   final String? parent; // Optionnel
-  final String? commentCount; // Optionnel
-  final String? likeCount; // Optionnel
+  final int? commentCount; // Optionnel
+  final int? likeCount; // Optionnel
   final String? createdAt; // Optionnel
   final String? updatedAt; // Optionnel
 
@@ -32,8 +32,8 @@ class Post {
       id: json['id'] as String?, // Nullable cast
       imageUrl: json['imageUrl'] as String?, // Nullable cast
       parent: json['parent'] as String?, // Nullable cast
-      commentCount: json['commentCount'] as String?, // Nullable cast
-      likeCount: json['likeCount'] as String?, // Nullable cast
+      commentCount: json['commentsCount'] as int?, // Nullable cast
+      likeCount: json['likesCount'] as int?, // Nullable cast
       createdAt: json['createdAt'] as String?, // Nullable cast
       updatedAt: json['updatedAt'] as String?, // Nullable cast
     );
