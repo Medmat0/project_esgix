@@ -47,4 +47,8 @@ class PostsRepository{
   Future<List<Post>> getPostsByUser(int page, int offset, String userId) async {
       return await remoteDataSource.getPostsByUser(page, offset, userId);
   }
+
+  Future<List<Post>> getCommentsPost(String idPost, int page, int offset) async {
+    return await remoteDataSource.getCommentsPost(idPost, page, offset);
+  }
 }

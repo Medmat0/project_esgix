@@ -18,4 +18,6 @@ abstract class PostsDataSource {
   Future<List<Post>> getPostByOffset(int page, int offset);
 
   Future<List<Post>> getPostsByUser(int page, int offset, String userId);
+
+  Future<List<Post>> getCommentsPost(String idPost, int page, int offset);
 }

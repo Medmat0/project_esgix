@@ -2,6 +2,7 @@ import 'package:esgix_project/screen/login_view_screen.dart';
 import 'package:esgix_project/screen/register_view_screen.dart';
 import 'package:esgix_project/screen/screen_add_post.dart';
 import 'package:esgix_project/screen/screen_feed.dart';
+import 'package:esgix_project/screen/screen_people_like_post.dart';
 import 'package:esgix_project/screen/screen_profile.dart';
 import 'package:esgix_project/screen/screen_profile_everyone.dart';
 import 'package:esgix_project/screen/screen_search.dart';
@@ -14,6 +15,7 @@ import 'package:esgix_project/services/user/users_data_source/api_users_data_sou
 import 'package:esgix_project/services/user/users_repository/users_repository.dart';
 import 'package:esgix_project/shared/post_bloc/post_bloc.dart';
 import 'package:esgix_project/shared/post_management_bloc/post_management_bloc.dart';
+import 'package:esgix_project/shared/post_other_bloc/post_other_bloc.dart';
 import 'package:esgix_project/shared/post_pagination_bloc/post_pagination_bloc.dart';
 import 'package:esgix_project/shared/user_management_bloc/user_management_bloc.dart';
 import 'package:esgix_project/shared/user_query_bloc/user_query_bloc.dart';
@@ -74,7 +76,15 @@ class MyApp extends StatelessWidget {
                 localPostsDataSource: FakeLocalPostsDataSource(),
               ),
             )
-        )
+        ),
+        BlocProvider(
+            create: (context) => PostOtherBloc(
+              postsRepository: PostsRepository(
+                remoteDataSource: ApiPostsDataSource(),
+                localPostsDataSource: FakeLocalPostsDataSource(),
+              ),
+            )
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -92,9 +102,11 @@ class MyApp extends StatelessWidget {
           '/tweet': (context) => ScreenTweet(
               id: ModalRoute.of(context)!.settings.arguments as String),
           '/add_post': (context) => ScreenAddPost(
-              id: ModalRoute.of(context)!.settings.arguments as String),
+              id: ModalRoute.of(context)!.settings.arguments as String?),
           '/profile-everyone': (context) => ScreenProfileEveryone(
               id: ModalRoute.of(context)!.settings.arguments as String),
+          '/people_like_post': (context) => ScreenPeopleLikePost(
+              postId: ModalRoute.of(context)!.settings.arguments as String),
         },
       ),
     );

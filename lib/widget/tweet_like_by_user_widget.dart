@@ -1,4 +1,4 @@
-import 'package:esgix_project/shared/post_pagination_bloc/post_pagination_bloc.dart';
+import 'package:esgix_project/shared/post_other_bloc/post_other_bloc.dart';
 import 'package:esgix_project/widget/tweet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,8 +32,8 @@ class _TweetLikeByUserState extends State<TweetLikeByUserWidget> {
 
 
   void _fetchPosts({int offset = 0, int page = 0}) {
-    context.read<PostPaginationBloc>().add(
-          PostPaginationLikeEvent(
+    context.read<PostOtherBloc>().add(
+      LikePostsByUserEvent(
               userId: widget.userId, offset: offset, page: page),
         );
   }
@@ -42,19 +42,19 @@ class _TweetLikeByUserState extends State<TweetLikeByUserWidget> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      child: BlocBuilder<PostPaginationBloc, PostPaginationState>(
+      child: BlocBuilder<PostOtherBloc, PostOtherState>(
         builder: (context, state) {
-          if (state.status == PostPaginationStatus.loading) {
+          if (state.status == PostOtherStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state.status == PostPaginationStatus.error) {
+          if (state.status == PostOtherStatus.error) {
             return const Center(
                 child: Text('Erreur lors de la récupération des données'));
           }
           if (state.posts.isEmpty) {
             return const Center(child: Text('Aucun post trouvé'));
           }
-          if (state.status == PostPaginationStatus.offsetPagePostByUserLikedSuccess) {
+          if (state.status == PostOtherStatus.success) {
             return _buildTweetLikeByUserWidget(state.posts);
           }
           return _buildTweetLikeByUserWidget(state.posts);

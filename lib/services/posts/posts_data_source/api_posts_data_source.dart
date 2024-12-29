@@ -115,4 +115,16 @@ class ApiPostsDataSource implements PostsDataSource {
     final jsonList = response.data['data'] as List;
     return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
+
+  @override
+  Future<List<Post>> getCommentsPost(String idPost, int page, int offset) async {
+    final dio = makeTheHeader();
+    final response = await dio.get(
+      "${dotenv.env['BASE_URL']}posts?page=$page&offset=$offset&parent=$idPost",
+    );
+    final statusCode = response.statusCode;
+    if (statusCode != 200) whatTypeOfError(statusCode!);
+    final jsonList = response.data['data'] as List;
+    return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
+  }
 }

@@ -24,7 +24,7 @@ class ScreenProfileState extends State<ScreenProfile> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         LoginScreen.navigateTo(context);
       });
-      return Container(); // Return an empty container to avoid red screen
+      return Container();
     }
 
     return Scaffold(

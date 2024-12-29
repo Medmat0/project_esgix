@@ -20,8 +20,7 @@ class UserQueryBloc extends Bloc<UserQueryEvent, UserQueryState> {
   void _onFindUserById(UserByIdEvent event, Emitter<UserQueryState> emit) async {
     emit(state.copyWith(status: UserQueryStatus.findUserById));
     try {
-      final user = await usersRepository.findUserById(event.userId);
-      emit(state.copyWith(
+      final user = await usersRepository.findUserById(event.userId);emit(state.copyWith(
         status: UserQueryStatus.success,
         users: [user],
       ));

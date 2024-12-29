@@ -38,33 +38,22 @@ class OneTweetState extends State<OneTweetWidget> {
           );
         }
 
-        return Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TweetWidget(
-                  id: state.post?.id ?? '',
-                  profileImageUrl: state.post?.author!.avatar ?? '',
-                  username: state.post?.author!.username ?? '',
-                  handle: state.post?.author!.username  ?? '',
-                  timeAgo: state.post?.createdAt!.toString() ?? '',
-                  content: state.post?.content ?? '',
-                  likes: state.post?.likeCount ?? 0,
-                  comments: state.post?.commentCount ?? 0,
-                  imageUrl: state.post?.imageUrl,
-                  userId: state.post?.author!.id ?? ''
-                ),
-              const SizedBox(width: 16),
-              const Text(
-                "Comments",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TweetWidget(
+                id: state.post?.id ?? '',
+                profileImageUrl: state.post?.author!.avatar ?? '',
+                username: state.post?.author!.username ?? '',
+                handle: state.post?.author!.username  ?? '',
+                timeAgo: state.post?.createdAt!.toString() ?? '',
+                content: state.post?.content ?? '',
+                likes: state.post?.likeCount ?? 0,
+                comments: state.post?.commentCount ?? 0,
+                imageUrl: state.post?.imageUrl,
+                userId: state.post?.author!.id ?? ''
               ),
-            ],
-          ),
+          ],
         );
       },
     );

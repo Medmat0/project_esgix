@@ -23,7 +23,6 @@ class ScreenProfileEveryone extends StatefulWidget {
 }
 
 class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
-  // Variable d'état pour savoir quel widget afficher
   bool showLikedTweets = true;
 
   @override
@@ -38,11 +37,9 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
       appBar: const AppBarWidget(name: 'Profile'),
       body: Column(
         children: [
-          // Ligne de boutons pour basculer entre les vues
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Bouton pour afficher les tweets aimés
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -50,13 +47,12 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
                   });
                 },
                 child: Text(
-                  'Tweets aimés',
+                  'Likes tweets',
                   style: TextStyle(
                     color: showLikedTweets ? Colors.blue : Colors.black,
                   ),
                 ),
               ),
-              // Bouton pour afficher les tweets créés
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -64,7 +60,7 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
                   });
                 },
                 child: Text(
-                  'Tweets créés',
+                  'Created tweets',
                   style: TextStyle(
                     color: !showLikedTweets ? Colors.blue : Colors.black,
                   ),
@@ -83,10 +79,10 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (state.status == UserQueryStatus.error) {
-                        return const Center(child: Text('Erreur lors de la récupération des données'));
+                        return const Center(child: Text('Failed to fetch user'));
                       }
                       if (state.users.isEmpty) {
-                        return const Center(child: Text('Aucun utilisateur trouvé'));
+                        return const Center(child: Text('No user found'));
                       }
                       return _buildProfileWidget(state.users.first);
                     },

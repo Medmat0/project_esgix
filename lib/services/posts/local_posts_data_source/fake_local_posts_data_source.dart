@@ -59,4 +59,10 @@ class FakeLocalPostsDataSource implements LocalPostsDataSource {
     // TODO: implement updatePost
     throw UnimplementedError();
   }
+
+  @override
+  Future<List<Post>> getCommentsPost(String idPost, int page, int offset) {
+    // TODO: implement getCommentsPost
+    throw UnimplementedError();
+  }
 }

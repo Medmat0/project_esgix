@@ -1,3 +1,4 @@
+import 'package:esgix_project/widget/comments_widget.dart';
 import 'package:esgix_project/widget/one_tweet_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,24 @@ class ScreenTweetState extends State<ScreenTweet> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarWidget(name: 'Tweet'),
-      body: OneTweetWidget(id: widget.id),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: OneTweetWidget(id: widget.id),
+          ),
+          const Text(
+            "Comments",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: CommentsWidget(idPost: widget.id),
+          ),
+        ],
+      ),
       bottomNavigationBar: const BaseScreen(),
     );
   }

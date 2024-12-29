@@ -1,4 +1,6 @@
 import 'package:esgix_project/screen/screen_add_post.dart';
+import 'package:esgix_project/screen/screen_people_like_post.dart';
+import 'package:esgix_project/singleton/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../screen/screen_profile_everyone.dart';
@@ -55,7 +57,7 @@ class TweetWidgetState extends State<TweetWidget> {
       listener: (context, state) {
         if (state.status == PostBlocStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Erreur lors de l'ajout du like")),
+            const SnackBar(content: Text("Error while liking post")),
           );
         }
         if (state.status == PostBlocStatus.errorNotLogin) {
@@ -112,12 +114,14 @@ class TweetWidgetState extends State<TweetWidget> {
                             icon: Icons.comment,
                             count: comments,
                             onPressed: _handleComment,
+                            onLongPress: _longPressComment,
                             isSelected: isCommented,
                           ),
                           _buildInteractionButton(
                             icon: Icons.favorite,
                             count: likes,
                             onPressed: _handleLike,
+                            onLongPress: _longPressLike,
                             isSelected: isLiked,
                           ),
                         ],
@@ -139,6 +143,12 @@ class TweetWidgetState extends State<TweetWidget> {
   }
 
   void _handleLike() {
+    if( SessionManager.instance.hasToken == false){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("You must be logged in to like")),
+      );
+      return;
+    }
     BlocProvider.of<PostBloc>(context).add(PostLikeEvent(id: widget.id));
     setState(() {
       isLiked = !isLiked;
@@ -154,14 +164,24 @@ class TweetWidgetState extends State<TweetWidget> {
     });
   }
 
+  void _longPressLike() {
+    ScreenPeopleLikePost.navigateTo(context, widget.id);
+  }
+
+  void _longPressComment() {
+    ScreenAddPost.navigateTo(context, widget.id);
+  }
+
   Widget _buildInteractionButton({
     required IconData icon,
     required int count,
     required VoidCallback onPressed,
+    required VoidCallback onLongPress,
     required bool isSelected,
   }) {
     return GestureDetector(
       onTap: onPressed,
+      onLongPress: onLongPress,
       behavior: HitTestBehavior.opaque,
       child: Row(
         children: [

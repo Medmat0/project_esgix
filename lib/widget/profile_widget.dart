@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../model/user.dart';
 
 class ProfileWidget extends StatefulWidget {
   final String id;
@@ -23,7 +22,6 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class ProfileWidgetState extends State<ProfileWidget> {
-  User? user;
 
   @override
   void initState() {
@@ -42,7 +40,7 @@ class ProfileWidgetState extends State<ProfileWidget> {
         ),
         const SizedBox(height: 16),
         Text(
-          user?.username ?? '',
+          widget.username,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
