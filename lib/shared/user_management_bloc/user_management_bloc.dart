@@ -43,12 +43,13 @@ class UserManagementBloc
       UserLoginEvent event, Emitter<UserManagementState> emit) async {
     emit(state.copyWith(status: UserManagementStatus.loginUser));
     try {
-      await usersRepository.loginUser(event.email, event.password);
+         await usersRepository.loginUser(event.email, event.password);
+         emit(state.copyWith(status: UserManagementStatus.successLoginUser));
+
+    } on AppException catch (e) {
       emit(state.copyWith(
-        status: UserManagementStatus.successLoginUser,
-      ));
-    } on Exception catch (_) {
-      emit(state.copyWith(status: UserManagementStatus.error));
+          status: UserManagementStatus.error,
+          errorMessage : e.message));
     }
     return;
   }

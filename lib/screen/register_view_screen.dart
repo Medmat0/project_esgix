@@ -83,7 +83,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Navigator.pushNamed(context, "/login");
           } else if (state.status == UserManagementStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!)),
+              SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: Colors.red,),
+
             );
           }
         },

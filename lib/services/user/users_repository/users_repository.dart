@@ -17,7 +17,7 @@ class UsersRepository {
 
     try {
       final userSave = await remoteDataSource.addUser(user);
-      localUsersDataSource.addUser(userSave);
+      //localUsersDataSource.addUser(userSave);
       return userSave;
     } on AppException catch (e) {
       throw e;
@@ -26,9 +26,11 @@ class UsersRepository {
 
   Future<bool> loginUser(String email, String password) async {
     try {
+
       return await remoteDataSource.loginUser(email, password);
-    } catch (error) {
-      return false;
+
+    } on AppException catch (e) {
+      throw e;
     }
   }
 

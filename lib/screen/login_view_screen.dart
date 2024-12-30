@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controllers pour capturer les données des champs texte
+  bool _errorShown = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -59,14 +59,23 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<UserManagementBloc, UserManagementState>(
         listener: (context, state) {
           if (state.status == UserManagementStatus.successLoginUser) {
+            ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Welcome back !"),
+              backgroundColor: Colors.green,
+            ),
+            );
             Navigator.pushNamedAndRemoveUntil(context, '/tweet_feed', (route) => false);
           } else if (state.status == UserManagementStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("An error occurred. Please try again."),
-                backgroundColor: Colors.red,
-              ),
-            );
+            if (!_errorShown) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              _errorShown = true;
+            }
           }
         },
         child: Padding(

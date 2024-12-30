@@ -36,18 +36,31 @@ class ApiUsersDataSource implements UsersDataSource {
   Future<bool> loginUser(String email, String password) async {
     final dio = makeTheHeader();
     final data = {
-      'email': email,
-      'password': password,
+      "email": email,
+      "password": password,
     };
-    final response =
-    await dio.post("${dotenv.env['BASE_URL']}auth/login", data: data);
-    final json = response.data;
-    final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
-    final user = AuthLoginDto.fromJson(json);
-    SessionManager.instance.setToken(user.token);
-    SessionManager.instance.setUserId(user.record.id);
-    return true;
+
+      final response = await dio.post("${dotenv.env['BASE_URL']}auth/login",
+          data: data,options: Options(
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),);
+
+      final json = response.data;
+      final statusCode = response.statusCode;
+      if (statusCode != 200) {
+        String apiMessage = response.data["message"] ?? "Unknown error occurred.";
+        throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
+      }
+      final user = AuthLoginDto.fromJson(json);
+
+      SessionManager.instance.setToken(user.token);
+      SessionManager.instance.setUserId(user.record.id);
+      return true;
+
+
+
   }
 
   @override
