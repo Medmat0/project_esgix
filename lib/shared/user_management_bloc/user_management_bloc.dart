@@ -47,9 +47,11 @@ class UserManagementBloc
       emit(state.copyWith(status: UserManagementStatus.successLoginUser));
 
     } on AppException catch (e) {
-      emit(state.copyWith(
-          status: UserManagementStatus.error,
-          errorMessage : e.message));
+      if (state.status != UserManagementStatus.error) {
+        emit(state.copyWith(
+            status: UserManagementStatus.error,
+            errorMessage: e.message));
+      }
     }
     return;
   }

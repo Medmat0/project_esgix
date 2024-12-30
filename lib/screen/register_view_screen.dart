@@ -17,12 +17,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  File? _avatar;
   final String _avatarUrl = '';
 
 
   Future<void> _register() async {
-    try {
+
       final username = _usernameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
@@ -56,9 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       context.read<UserManagementBloc>().add(UserRegisterEvent(user: user));
-    } catch (e) {
-      throw (e);
-    }
+
   }
 
   @override

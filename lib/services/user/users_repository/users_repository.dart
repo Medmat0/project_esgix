@@ -15,23 +15,18 @@ class UsersRepository {
 
   Future<User> addUser(User user) async {
 
-    try {
+
       final userSave = await remoteDataSource.addUser(user);
       //localUsersDataSource.addUser(userSave);
       return userSave;
-    } on AppException catch (e) {
-      throw e;
-    }
+
   }
 
   Future<bool> loginUser(String email, String password) async {
-    try {
 
       return await remoteDataSource.loginUser(email, password);
 
-    } on AppException catch (e) {
-      throw e;
-    }
+
   }
 
   Future<User> findUserById(String id) async {
