@@ -30,8 +30,11 @@ class UserManagementBloc
         status: UserManagementStatus.successAddingUser,
         user: userInsert,
       ));
-    } on Exception catch (_) {
-      emit(state.copyWith(status: UserManagementStatus.error));
+    } on AppException catch (e) {
+      emit(state.copyWith(
+        status: UserManagementStatus.error,
+        errorMessage: e.message,
+      ));
     }
     return;
   }
@@ -41,11 +44,12 @@ class UserManagementBloc
     emit(state.copyWith(status: UserManagementStatus.loginUser));
     try {
       await usersRepository.loginUser(event.email, event.password);
+      emit(state.copyWith(status: UserManagementStatus.successLoginUser));
+
+    } on AppException catch (e) {
       emit(state.copyWith(
-        status: UserManagementStatus.successLoginUser,
-      ));
-    } on Exception catch (_) {
-      emit(state.copyWith(status: UserManagementStatus.error));
+          status: UserManagementStatus.error,
+          errorMessage : e.message));
     }
     return;
   }
