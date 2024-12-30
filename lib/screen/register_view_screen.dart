@@ -31,14 +31,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (username.isEmpty || email.isEmpty || bio.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tous les champs sont requis.')),
+          const SnackBar(content:
+          Text('All fields are required.'),
+            backgroundColor: Colors.red,)
         );
         return;
       }
 
       if (password != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Les mots de passe ne correspondent pas.')),
+          const SnackBar(content:
+          Text('Passwords do not match.'),
+            backgroundColor: Colors.red),
         );
         return;
       }
@@ -65,7 +69,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         listener: (context, state) {
           if (state.status == UserManagementStatus.successAddingUser) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Compte créé avec succès !")),
+              const SnackBar(
+                    content: Text("Account successfully created!"),
+                   backgroundColor: Colors.green)
             );
             Navigator.pushNamed(context, "/login");
           } else if (state.status == UserManagementStatus.error) {
