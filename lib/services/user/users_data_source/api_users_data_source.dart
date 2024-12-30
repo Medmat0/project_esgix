@@ -1,8 +1,10 @@
 
+import 'package:dio/dio.dart';
 import 'package:esgix_project/model/user.dart';
 import 'package:esgix_project/services/user/users_data_source/users_data_source.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../../../app_exception.dart';
 import '../../../model/auth_login_dto.dart';
 import '../../../singleton/session_manager.dart';
 import '../../dio_service.dart';
@@ -12,34 +14,53 @@ class ApiUsersDataSource implements UsersDataSource {
 
   @override
   Future<User> addUser(User user) async {
+
     final dio = makeTheHeader();
     final response = await dio.post("${dotenv.env['BASE_URL']}auth/register",
-        data: user.toJson());
+      data: user.toJson(),
+      options: Options(
+        validateStatus: (status) {
+          return status! < 500;
+        },
+      ),);
     final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
+    if(statusCode != 200) {
+      String apiMessage = response.data["message"] ?? "Unknown error occurred.";
+      throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
+    }
     return User.fromJson(response.data);
+
   }
 
   @override
   Future<bool> loginUser(String email, String password) async {
     final dio = makeTheHeader();
     final data = {
-      'email': email,
-      'password': password,
+      "email": email,
+      "password": password,
     };
-    final response =
-    await dio.post("${dotenv.env['BASE_URL']}auth/login", data: data);
+
+    final response = await dio.post("${dotenv.env['BASE_URL']}auth/login",
+      data: data,options: Options(
+        validateStatus: (status) {
+          return status! < 500;
+        },
+      ),);
+
     final json = response.data;
     final statusCode = response.statusCode;
-    if (statusCode != 200) whatTypeOfError(statusCode!);
+    if (statusCode != 200) {
+      String apiMessage = response.data["message"] ?? "Unknown error occurred.";
+      throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
+    }
     final user = AuthLoginDto.fromJson(json);
+
     SessionManager.instance.setToken(user.token);
     SessionManager.instance.setUserId(user.record.id);
-    SessionManager.instance.setUserName(user.record.username);
-    SessionManager.instance.setUserAvatar(user.record.avatar);
-    SessionManager.instance.setUserDescription(user.record.description);
-    SessionManager.instance.setEmail(user.record.email);
     return true;
+
+
+
   }
 
   @override
