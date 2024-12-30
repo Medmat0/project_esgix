@@ -1,4 +1,5 @@
 import 'package:esgix_project/screen/screen_edit_profile.dart';
+import 'package:esgix_project/screen/screen_feed.dart';
 import 'package:esgix_project/shared/user_query_bloc/user_query_bloc.dart';
 import 'package:esgix_project/singleton/session_manager.dart';
 import 'package:esgix_project/widget/tweet_like_by_user_widget.dart';
@@ -146,11 +147,12 @@ class ScreenProfileEveryoneState extends State<ScreenProfileEveryone> {
                 isCurrentUser
                     ? IconButton(
                         icon: const Icon(Icons.logout),
-                        onPressed: () {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            LoginScreen.navigateTo(context);
-                            SessionManager.instance.clearAll();
-                          });
+                        onPressed: () async {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => const ScreenFeed()),
+                                (route) => false,
+                          );
+                          SessionManager.instance.clearAll();
                         },
                       )
                     : const SizedBox(),
