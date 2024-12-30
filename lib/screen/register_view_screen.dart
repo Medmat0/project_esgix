@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import '../model/user.dart';
 import '../shared/user_management_bloc/user_management_bloc.dart';
 
@@ -22,17 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _avatar;
   final String _avatarUrl = '';
 
-  Future<void> _pickAvatar() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _avatar = File(pickedFile.path);
-      });
-    } else {
-      print("Aucune image sélectionnée.");
-    }
-  }
 
   Future<void> _register() async {
     try {
@@ -117,24 +104,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Center(
-                    child: GestureDetector(
-                      onTap: _pickAvatar,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: _avatar != null ? FileImage(_avatar!) : null,
-                        child: _avatar == null
-                            ? const Icon(
-                          Icons.person,
-                          size: 50,
-                          color: Colors.grey,
-                        )
-                            : null,
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
