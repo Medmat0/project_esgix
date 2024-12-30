@@ -1,68 +1,45 @@
 class AppException implements Exception {
   final String? message;
   AppException({this.message});
+
   static AppException from(dynamic exception) {
     if (exception is AppException) return exception;
     return UnknownException();
   }
 }
 
-class UnknownException extends AppException {}
-
-class AuthException extends AppException {
-  final String message;
-
-  AuthException({
-    required this.message,
-  });
+class UnknownException extends AppException {
+  UnknownException() : super(message: 'An unknown error occurred');
 }
 
-class UserException extends AppException {}
+class AuthException extends AppException {
+  AuthException({super.message});
+}
+
+class UserException extends AppException {
+  UserException({super.message});
+}
 
 class PostException extends AppException {
-  final String? message;
-
-  PostException({
-    required this.message,
-  });
+  PostException({super.message});
 }
 
 class UnauthorizedPathWithNoToken extends AppException {
-  final String? message;
-
-  UnauthorizedPathWithNoToken({
-    required this.message,
-  });
+  UnauthorizedPathWithNoToken({super.message});
 }
 
 class ResourceNotFound extends AppException {
-  final String? message;
-
-  ResourceNotFound({
-    this.message,
-  });
+  ResourceNotFound({super.message});
 }
 
 class RequestForbidden extends AppException {
-  final String? message;
-
-  RequestForbidden({
-    this.message,
-  });
+  RequestForbidden({super.message});
 }
 
 class RequestConflict extends AppException {
-  final String? message;
-
-  RequestConflict({
-    this.message,
-  });
+  RequestConflict({super.message});
 }
 
 class RequestNoContent extends AppException {
-  final String? message;
-
-  RequestNoContent({
-    this.message,
-  });
+  RequestNoContent({super.message});
 }

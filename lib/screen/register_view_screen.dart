@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../model/user.dart';
 import '../shared/user_management_bloc/user_management_bloc.dart';
 
@@ -8,56 +8,82 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  File? _avatar;
   final String _avatarUrl = '';
 
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _bioController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  bool _validateInputs() {
+    final username = _usernameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+    final bio = _bioController.text.trim();
+
+    if (username.isEmpty || email.isEmpty || bio.isEmpty ||
+        password.isEmpty || confirmPassword.isEmpty) {
+      _showErrorSnackBar('All fields are required.');
+      return false;
+    }
+
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      _showErrorSnackBar('Please enter a valid email address.');
+      return false;
+    }
+
+    if (password != confirmPassword) {
+      _showErrorSnackBar('Passwords do not match.');
+      return false;
+    }
+
+    if (password.length < 6) {
+      _showErrorSnackBar('Password must be at least 6 characters long.');
+      return false;
+    }
+
+    return true;
+  }
 
   Future<void> _register() async {
     try {
-      final username = _usernameController.text.trim();
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
-      final confirmPassword = _confirmPasswordController.text.trim();
-      final bio = _bioController.text.trim();
-
-      if (username.isEmpty || email.isEmpty || bio.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content:
-          Text('All fields are required.'),
-            backgroundColor: Colors.red,)
-        );
-        return;
-      }
-
-      if (password != confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content:
-          Text('Passwords do not match.'),
-            backgroundColor: Colors.red),
-        );
-        return;
-      }
+      if (!_validateInputs()) return;
 
       final user = User(
-        username: username,
-        email: email,
-        password: password,
+        username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
         avatar: _avatarUrl,
-        description: bio,
+        description: _bioController.text.trim(),
       );
 
       context.read<UserManagementBloc>().add(UserRegisterEvent(user: user));
     } catch (e) {
-      throw (e);
+      _showErrorSnackBar('An error occurred during registration: ${e.toString()}');
     }
   }
 
@@ -70,17 +96,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (state.status == UserManagementStatus.successAddingUser) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                    content: Text("Account successfully created!"),
-                   backgroundColor: Colors.green)
+                content: Text("Account successfully created!"),
+                backgroundColor: Colors.green,
+              ),
             );
-            Navigator.pushNamed(context, "/login");
+            Navigator.pushReplacementNamed(context, "/login");
           } else if (state.status == UserManagementStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: Colors.red,),
-
-            );
+            _showErrorSnackBar(state.errorMessage ?? 'An error occurred');
           }
         },
         builder: (context, state) {
@@ -88,115 +110,111 @@ class _RegisterScreenState extends State<RegisterScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  const Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Sign up to get started",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: "Username",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    const Text(
+                      "Create Account",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _bioController,
-                    decoration: InputDecoration(
-                      labelText: "Description",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _confirmPasswordController,
-                    decoration: InputDecoration(
-                      labelText: "Confirm Password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _register,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                    child: const Text(
-                      "Sign Up",
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Sign up to get started",
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.grey,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, "/login");
-                      },
-                      child: const Text("Already have an account? Log in"),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _usernameController,
+                      label: "Username",
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _emailController,
+                      label: "Email",
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _bioController,
+                      label: "Description",
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _passwordController,
+                      label: "Password",
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _confirmPasswordController,
+                      label: "Confirm Password",
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _register,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: TextButton(
+                        onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
+                        child: const Text("Already have an account? Log in"),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+    int? maxLines,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      maxLines: obscureText ? 1 : maxLines,
     );
   }
 }

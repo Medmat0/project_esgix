@@ -1,10 +1,10 @@
 class User {
-  final String? email; // Rendu optionnel pour gérer son absence
-  final String? password; // Optionnel
-  final String username; // Requis
-  final String avatar; // Requis
-  final String? id; // Optionnel
-  final String? description; // Optionnel
+  final String? email;
+  final String? password;
+  final String username;
+  final String avatar;
+  final String? id;
+  final String? description;
 
   const User({
     this.email,
@@ -17,12 +17,12 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      email: json['email'] as String?, // Nullable cast
-      avatar: json['avatar'] as String, // Champ requis
-      password: json['password'] as String?, // Nullable cast
-      username: json['username'] as String, // Champ requis
-      id: json['id'] as String?, // Nullable cast
-      description: json['description'] as String?, // Nullable cast
+      email: json['email'] as String?,
+      avatar: json['avatar'] as String,
+      password: json['password'] as String?,
+      username: json['username'] as String,
+      id: json['id'] as String?,
+      description: json['description'] as String?,
     );
   }
 

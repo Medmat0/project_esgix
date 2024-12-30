@@ -14,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _errorShown = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -54,11 +53,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool snackbarShown = false;
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<UserManagementBloc, UserManagementState>(
-        listener: (context, state) {
+          listener: (context, state) {
           if (state.status == UserManagementStatus.successLoginUser) {
+            snackbarShown = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Welcome back !"),
@@ -66,16 +67,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
             Navigator.pushNamedAndRemoveUntil(context, '/tweet_feed', (route) => false);
-          } else if (state.status == UserManagementStatus.error) {
-            if (!_errorShown) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              _errorShown = true;
-            }
+          } else if (state.status == UserManagementStatus.error && !snackbarShown) {
+            snackbarShown = true;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
         child: Padding(
