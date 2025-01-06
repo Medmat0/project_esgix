@@ -36,7 +36,7 @@ class ProfileWidgetState extends State<ProfileWidget> {
           radius: 50,
           backgroundImage: widget.avatar.isNotEmpty
               ? NetworkImage(widget.avatar)
-              : const AssetImage('egg.jpeg') as ImageProvider,
+              : const AssetImage('assets/egg.jpeg') as ImageProvider,
         ),
         const SizedBox(height: 16),
         Text(

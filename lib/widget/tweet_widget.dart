@@ -101,7 +101,7 @@ class TweetWidgetState extends State<TweetWidget> {
                     child: CircleAvatar(
                       backgroundImage: widget.profileImageUrl.isNotEmpty
                           ? NetworkImage(widget.profileImageUrl)
-                          : const AssetImage('egg.jpeg') as ImageProvider,
+                          : const AssetImage('assets/egg.jpeg') as ImageProvider,
                     ),
                   ),
                   const SizedBox(width: 10),
