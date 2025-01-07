@@ -111,14 +111,26 @@ class TweetWidgetState extends State<TweetWidget> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              widget.username,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              '@${widget.handle} · ${widget.timeAgo}',
-                              style: const TextStyle(color: Colors.grey),
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      widget.username,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      '@${widget.handle} · ${widget.timeAgo}',
+                                      style: const TextStyle(color: Colors.grey),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             _buildTwoButtonIfConnected(),
                           ],
