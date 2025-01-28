@@ -14,7 +14,7 @@ class TweetFeedState extends State<TweetFeed> {
   final ScrollController scrollController = ScrollController();
   int currentPage = 0;
   bool isLoading = false;
-  bool hasMoreData = true;  // Nouveau flag pour la fin de pagination
+  bool hasMoreData = true; // Flag to check if there are more posts to load
 
   @override
   void initState() {
@@ -45,11 +45,10 @@ class TweetFeedState extends State<TweetFeed> {
         if (!mounted) return;
 
         if (state.status == PostPaginationStatus.offsetPagePostSuccess) {
-          final newDataReceived = state.posts.length > (currentPage * 10);
           setState(() {
-            hasMoreData = newDataReceived;
             isLoading = false;
-            if (newDataReceived) {
+            hasMoreData = state.hasMoreData;
+            if (state.posts.isNotEmpty) {
               currentPage++;
             }
           });
@@ -133,12 +132,12 @@ class TweetFeedState extends State<TweetFeed> {
   }
 
   void onScroll() {
-    if (!mounted || !hasMoreData) return;
+    if (!mounted || !hasMoreData || isLoading) return;
 
     final maxScroll = scrollController.position.maxScrollExtent;
     final currentScroll = scrollController.position.pixels;
 
-    if (currentScroll >= maxScroll * 0.9 && !isLoading) {
+    if (currentScroll >= maxScroll * 0.9) {
       loadMorePosts();
     }
   }

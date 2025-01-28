@@ -1,7 +1,6 @@
 import 'package:esgix_project/services/user/local_users_data_source/local_users_data_source.dart';
 import 'package:esgix_project/services/user/users_data_source/users_data_source.dart';
 
-import '../../../app_exception.dart';
 import '../../../model/user.dart';
 
 class UsersRepository {
@@ -16,48 +15,28 @@ class UsersRepository {
   Future<User> addUser(User user) async {
 
 
-      final userSave = await remoteDataSource.addUser(user);
-      //localUsersDataSource.addUser(userSave);
-      return userSave;
+    final userSave = await remoteDataSource.addUser(user);
+    return userSave;
 
   }
 
   Future<bool> loginUser(String email, String password) async {
 
-      return await remoteDataSource.loginUser(email, password);
-
+    return await remoteDataSource.loginUser(email, password);
 
   }
 
   Future<User> findUserById(String id) async {
-    try {
-      final user = await remoteDataSource.findUserById(id);
-      localUsersDataSource.addUser(user);
-      return user;
-    } catch (error) {
-      return localUsersDataSource.findUserById(id);
-    }
+    return await remoteDataSource.findUserById(id);
   }
 
   Future<List<User>> findListUsersByLikedIdPost(String idPost) async {
-    try {
-      final users = await remoteDataSource.findListUsersByLikedIdPost(idPost);
-      //localUsersDataSource.addUsers(users);
-      return users;
-    } catch (error) {
-      return localUsersDataSource.findListUsersByLikedIdPost(idPost);
-    }
+    return await remoteDataSource.findListUsersByLikedIdPost(idPost);
   }
 
   Future<User> updateUser(String userId, String? username, String? avatar,
       String? description) async {
-    try {
-      final user = await remoteDataSource.updateUser(
-          userId, username, avatar, description);
-      localUsersDataSource.addUser(user);
-      return user;
-    } catch (error) {
-      return localUsersDataSource.findUserById(userId);
-    }
+    return await remoteDataSource.updateUser(
+        userId, username, avatar, description);
   }
 }

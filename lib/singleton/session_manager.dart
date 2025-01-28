@@ -1,14 +1,10 @@
 class SessionManager {
-  // Instance unique du singleton
   static final SessionManager _instance = SessionManager._internal();
 
-  // Constructeur privé
   SessionManager._internal();
 
-  // Accès global au singleton
   static SessionManager get instance => _instance;
 
-  // Token utilisateur (modifiable)
   String? token;
 
   String? userId;
@@ -45,9 +41,6 @@ class SessionManager {
     return description;
   }
 
-
-
-  // Définit ou met à jour le token
   void setToken(String? newToken) {
     token = newToken;
   }

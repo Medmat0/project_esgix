@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:esgix_project/shared/post_other_bloc/post_other_bloc.dart';
 
-
 class CommentsWidget extends StatefulWidget {
   final String idPost;
 
@@ -49,11 +48,10 @@ class CommentsWidgetState extends State<CommentsWidget> {
         if (!mounted) return;
 
         if (state.status == PostOtherStatus.success) {
-          final newDataReceived = state.posts.length > (currentPage * 10);
           setState(() {
-            hasMoreData = newDataReceived;
             isLoading = false;
-            if (newDataReceived) {
+            hasMoreData = state.hasMoreData; // Update hasMoreData from the state
+            if (state.posts.isNotEmpty) {
               currentPage++;
             }
           });
@@ -135,12 +133,12 @@ class CommentsWidgetState extends State<CommentsWidget> {
   }
 
   void onScroll() {
-    if (!mounted || !hasMoreData) return;
+    if (!mounted || !hasMoreData || isLoading) return;
 
     final maxScroll = scrollController.position.maxScrollExtent;
     final currentScroll = scrollController.position.pixels;
 
-    if (currentScroll >= maxScroll * 0.9 && !isLoading) {
+    if (currentScroll >= maxScroll * 0.9) {
       loadMoreComments();
     }
   }

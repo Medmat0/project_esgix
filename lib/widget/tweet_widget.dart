@@ -23,6 +23,7 @@ class TweetWidget extends StatefulWidget {
   final int likes;
   final int comments;
 
+
   const TweetWidget({
     super.key,
     required this.id,
@@ -101,7 +102,7 @@ class TweetWidgetState extends State<TweetWidget> {
                     child: CircleAvatar(
                       backgroundImage: widget.profileImageUrl.isNotEmpty
                           ? NetworkImage(widget.profileImageUrl)
-                          : const AssetImage('egg.jpeg') as ImageProvider,
+                          : const AssetImage('assets/egg.jpeg') as ImageProvider,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -111,14 +112,26 @@ class TweetWidgetState extends State<TweetWidget> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              widget.username,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              '@${widget.handle} · ${widget.timeAgo}',
-                              style: const TextStyle(color: Colors.grey),
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      widget.username,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      '@${widget.handle} · ${widget.timeAgo}',
+                                      style: const TextStyle(color: Colors.grey),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             _buildTwoButtonIfConnected(),
                           ],

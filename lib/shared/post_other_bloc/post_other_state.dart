@@ -1,27 +1,32 @@
 part of 'post_other_bloc.dart';
 
-enum PostOtherStatus { initial, loading, success, error }
+enum PostOtherStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
 
-class PostOtherState  {
-  final PostOtherStatus status;
-  final PostException? exception;
+class PostOtherState {
   final List<Post> posts;
+  final PostOtherStatus status;
+  final bool hasMoreData;
 
   const PostOtherState({
     this.status = PostOtherStatus.initial,
-    this.exception,
     this.posts = const [],
+    this.hasMoreData = true,
   });
 
   PostOtherState copyWith({
     PostOtherStatus? status,
-    PostException? exception,
     List<Post>? posts,
+    bool? hasMoreData,
   }) {
     return PostOtherState(
       status: status ?? this.status,
-      exception: exception ?? this.exception,
       posts: posts ?? this.posts,
+      hasMoreData: hasMoreData ?? this.hasMoreData,
     );
   }
 }

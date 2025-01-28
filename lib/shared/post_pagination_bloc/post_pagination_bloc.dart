@@ -52,22 +52,29 @@ class PostPaginationBloc extends Bloc<PostPaginationEvent, PostPaginationState> 
     }
   }
 
-  Future<void> _onOffsetPagePost(PostPaginationOffsetEvent event, Emitter<PostPaginationState> emit) async {
+  Future<void> _onOffsetPagePost(PostPaginationOffsetEvent event, Emitter<PostPaginationState> emit,
+      ) async {
     emit(state.copyWith(status: PostPaginationStatus.loading));
+
     try {
       final posts = await postsRepository.getPostByOffset(event.page, event.offset);
+
+      final hasMoreData = posts.isNotEmpty;
+
+      final updatedPosts = (event.offset == 0 && event.page == 0) ? posts : state.posts + posts;
+
       emit(state.copyWith(
         status: PostPaginationStatus.offsetPagePostSuccess,
-        posts: posts,
+        posts: updatedPosts,
+        hasMoreData: hasMoreData,
       ));
     } catch (error) {
       emit(state.copyWith(
         status: PostPaginationStatus.error,
-        exception: PostException(message: "don't success to fetch posts"),
+        exception: PostException(message: "Failed to fetch posts"),
       ));
     }
   }
-
   Future<void> _onOffsetPagePostByUser(PostPaginationByUserEvent event, Emitter<PostPaginationState> emit) async {
     emit(state.copyWith(status: PostPaginationStatus.loading));
     try {

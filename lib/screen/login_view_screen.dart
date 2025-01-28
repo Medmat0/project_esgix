@@ -14,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _errorShown = false;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -58,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<UserManagementBloc, UserManagementState>(
-          listener: (context, state) {
+        listener: (context, state) {
           if (state.status == UserManagementStatus.successLoginUser) {
             _snackbarShown = false;
             ScaffoldMessenger.of(context).showSnackBar(

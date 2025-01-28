@@ -12,7 +12,6 @@ class ApiUsersDataSource implements UsersDataSource {
 
   @override
   Future<User> addUser(User user) async {
-
     final dio = makeTheHeader();
     final response = await dio.post("${dotenv.env['BASE_URL']}auth/register",
       data: user.toJson(),
@@ -26,8 +25,8 @@ class ApiUsersDataSource implements UsersDataSource {
       String apiMessage = response.data["message"] ?? "Unknown error occurred.";
       throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
     }
+    SessionManager.instance.setToken(response.data["token"]);
     return User.fromJson(response.data);
-
   }
 
   @override
@@ -52,9 +51,12 @@ class ApiUsersDataSource implements UsersDataSource {
        throw whatTypeOfError(statusCode!, apiMessage: apiMessage);
     }
     final user = AuthLoginDto.fromJson(json);
-
     SessionManager.instance.setToken(user.token);
     SessionManager.instance.setUserId(user.record.id);
+    SessionManager.instance.setUserName(user.record.username);
+    SessionManager.instance.setUserAvatar(user.record.avatar);
+    SessionManager.instance.setUserDescription(user.record.description);
+    SessionManager.instance.setEmail(user.record.email);
     return true;
 
 

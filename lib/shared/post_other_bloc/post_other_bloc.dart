@@ -19,14 +19,15 @@ class PostOtherBloc extends Bloc<PostOtherEvent, PostOtherState> {
     emit(state.copyWith(status: PostOtherStatus.loading));
     try {
       final posts = await postsRepository.getCommentsPost(event.idPost, event.page, event.offset);
+      final hasMoreData = posts.isNotEmpty;
       emit(state.copyWith(
         status: PostOtherStatus.success,
-        posts: posts,
+        posts: state.posts + posts,
+        hasMoreData: hasMoreData,
       ));
     } on Exception catch (_) {
       emit(state.copyWith(status: PostOtherStatus.error));
     }
-    return;
   }
 
   void _onLikePostsByUser(LikePostsByUserEvent event, Emitter<PostOtherState> emit) async {

@@ -25,7 +25,7 @@ class UserWidget extends StatelessWidget {
               CircleAvatar(
                 backgroundImage: user.avatar.isNotEmpty
                     ? NetworkImage(user.avatar)
-                    : const AssetImage('egg.jpeg') as ImageProvider,
+                    : const AssetImage('assets/egg.jpeg') as ImageProvider,
               ),
               const SizedBox(width: 10),
               Column(

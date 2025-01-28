@@ -3,6 +3,7 @@ import 'package:esgix_project/shared/post_management_bloc/post_management_bloc.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../model/post.dart';
+import '../shared/post_pagination_bloc/post_pagination_bloc.dart';
 
 class AddPostWidget extends StatefulWidget {
   final String? id;
@@ -25,56 +26,79 @@ class AddPostState extends State<AddPostWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          const Text(
-            "Add Post",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return BlocListener<PostManagementBloc, PostManagementState>(
+      listener: (context, state) {
+        if (state.status == PostManagementStatus.addPostSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post added successfully')),
+          );
+
+          _contentController.clear();
+          _imageUrlController.clear();
+
+          Navigator.pop(context);
+
+
+          context.read<PostPaginationBloc>().add(const PostPaginationOffsetEvent(
+            offset: 0,
+            page: 0,
+          ));
+        } else if (state.status == PostManagementStatus.error ||
+            state.status == PostManagementStatus.errorAddPost) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error adding post')),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            const Text(
+              "Add Post",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _contentController,
-            decoration: const InputDecoration(
-              hintText: 'Content',
+            const SizedBox(height: 16),
+            TextField(
+              controller: _contentController,
+              decoration: const InputDecoration(hintText: 'Content'),
             ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _imageUrlController,
-            decoration: const InputDecoration(
-              hintText: 'Image URL',
+            const SizedBox(height: 16),
+            TextField(
+              controller: _imageUrlController,
+              decoration: const InputDecoration(hintText: 'Image URL'),
             ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              if (_contentController.text.isEmpty) return;
-              _onAddPost();
-              _contentController.clear();
-              _imageUrlController.clear();
-              ScreenFeed.navigateTo(context);
-            },
-            child: const Text('Add Post'),
-          ),
-        ],
+            const SizedBox(height: 16),
+            BlocBuilder<PostManagementBloc, PostManagementState>(
+              builder: (context, state) {
+                return ElevatedButton(
+                  onPressed: state.status == PostManagementStatus.loading
+                      ? null
+                      : () {
+                    if (_contentController.text.isEmpty) return;
+                    _onAddPost();
+                  },
+                  child: state.status == PostManagementStatus.loading
+                      ? const CircularProgressIndicator()
+                      : const Text('Add Post'),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _onAddPost(){
+  void _onAddPost() {
     BlocProvider.of<PostManagementBloc>(context).add(
-        PostManagementAddEvent(
-          post: Post(
-            parent: widget.id,
-            content: _contentController.text,
-            imageUrl: _imageUrlController.text,
-          ),
-        )
+      PostManagementAddEvent(
+        post: Post(
+          parent: widget.id,
+          content: _contentController.text,
+          imageUrl: _imageUrlController.text,
+        ),
+      ),
     );
   }
 }
