@@ -57,20 +57,22 @@ class PostManagementBloc extends Bloc<PostManagementEvent, PostManagementState> 
     }
   }
 
-  Future<void> _onFindOnePost(PostManagementFindOneEvent event, Emitter<PostManagementState> emit) async {
+  Future<void> _onFindOnePost(
+      PostManagementFindOneEvent event,
+      Emitter<PostManagementState> emit,
+      ) async {
     emit(state.copyWith(status: PostManagementStatus.loading));
+
     try {
       final post = await postsRepository.findOnPostById(event.idPost);
       emit(state.copyWith(
-        status: PostManagementStatus.findOnePostSuccess,
+        status: PostManagementStatus.success,
         post: post,
       ));
-    } on UnauthorizedPathWithNoToken catch (_) {
-      emit(state.copyWith(status: PostManagementStatus.errorNotLogin));
     } catch (error) {
       emit(state.copyWith(
         status: PostManagementStatus.error,
-        exception: PostException(message: "don't success to find one post"),
+        exception: PostException(message: "Failed to fetch post: $error"),
       ));
     }
   }

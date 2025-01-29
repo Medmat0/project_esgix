@@ -14,7 +14,7 @@ class TweetFeedState extends State<TweetFeed> {
   final ScrollController scrollController = ScrollController();
   int currentPage = 0;
   bool isLoading = false;
-  bool hasMoreData = true; // Flag to check if there are more posts to load
+  bool hasMoreData = true;
 
   @override
   void initState() {

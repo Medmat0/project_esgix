@@ -27,6 +27,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
 
   void _initialLoad() {
     if (!mounted) return;
+    String idpost = widget.idPost;
+    print("idpost $idpost");
     context.read<PostOtherBloc>().add(GetCommentsPostEvent(
       idPost: widget.idPost,
       page: 0,
@@ -50,7 +52,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
         if (state.status == PostOtherStatus.success) {
           setState(() {
             isLoading = false;
-            hasMoreData = state.hasMoreData; // Update hasMoreData from the state
+            hasMoreData = state.hasMoreData;
             if (state.posts.isNotEmpty) {
               currentPage++;
             }

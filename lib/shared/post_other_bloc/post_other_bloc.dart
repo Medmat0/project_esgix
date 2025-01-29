@@ -20,11 +20,14 @@ class PostOtherBloc extends Bloc<PostOtherEvent, PostOtherState> {
     try {
       final posts = await postsRepository.getCommentsPost(event.idPost, event.page, event.offset);
       final hasMoreData = posts.isNotEmpty;
+      final updatedPosts = (event.offset == 0 && event.page == 0) ? posts : state.posts + posts;
+
       emit(state.copyWith(
         status: PostOtherStatus.success,
-        posts: state.posts + posts,
+        posts: updatedPosts,
         hasMoreData: hasMoreData,
       ));
+      print("comments: ${posts.map((post) => post.toString()).join(', ')}");
     } on Exception catch (_) {
       emit(state.copyWith(status: PostOtherStatus.error));
     }
