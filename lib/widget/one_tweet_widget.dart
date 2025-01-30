@@ -40,22 +40,26 @@ class OneTweetState extends State<OneTweetWidget> {
         }
 
         final post = state.post!;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TweetWidget(
-              id: post.id ?? '',
-              profileImageUrl: post.author?.avatar ?? '',
-              username: post.author?.username ?? '',
-              handle: post.author?.username ?? '',
-              timeAgo: post.createdAt?.toString() ?? '',
-              content: post.content ?? '',
-              likes: post.likeCount ?? 0,
-              comments: post.commentCount ?? 0,
-              imageUrl: post.imageUrl,
-              userId: post.author?.id ?? '',
-            ),
-          ],
+        return Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TweetWidget(
+                id: post.id ?? '',
+                profileImageUrl: post.author?.avatar ?? '',
+                username: post.author?.username ?? '',
+                handle: post.author?.username ?? '',
+                timeAgo: post.createdAt?.toString() ?? '',
+                content: post.content ?? '',
+                likes: post.likeCount ?? 0,
+                comments: post.commentCount ?? 0,
+                imageUrl: post.imageUrl,
+                userId: post.author?.id ?? '',
+                likedByUser: post.likedByUser ?? false,
+
+              ),
+            ],
+          ),
         );
       },
     );

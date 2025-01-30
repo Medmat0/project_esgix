@@ -75,6 +75,8 @@ class TweetCreatedByUserState extends State<TweetCreatedByUserWidget> {
               comments: post.commentCount ?? 0,
               imageUrl: post.imageUrl ?? '',
               userId: post.author?.id ?? '',
+              likedByUser: post.likedByUser ?? false, // Ajout ici
+
             );
           }
           return const Center(child: CircularProgressIndicator());

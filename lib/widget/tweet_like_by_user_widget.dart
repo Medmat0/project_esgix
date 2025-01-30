@@ -82,6 +82,7 @@ class _TweetLikeByUserState extends State<TweetLikeByUserWidget> {
               comments: post.commentCount ?? 0,
               imageUrl: post.imageUrl ?? '',
               userId: post.author?.id ?? '',
+              likedByUser: post.likedByUser ?? false,
             );
           }
           return const Center(child: CircularProgressIndicator());

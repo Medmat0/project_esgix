@@ -8,6 +8,7 @@ class Post {
   final String? parent; // Optionnel
   final int? commentCount; // Optionnel
   final int? likeCount; // Optionnel
+  final bool? likedByUser;
   final String? createdAt; // Optionnel
   final String? updatedAt; // Optionnel
 
@@ -19,6 +20,7 @@ class Post {
     this.parent,
     this.commentCount,
     this.likeCount,
+    this.likedByUser,
     this.createdAt,
     this.updatedAt,
   });
@@ -29,20 +31,14 @@ class Post {
           ? User.fromJson(json['author'])
           : null,
       content: json['content'] as String,
-      // Requis, déclenche une erreur si absent
       id: json['id'] as String?,
-      // Nullable cast
       imageUrl: json['imageUrl'] as String?,
-      // Nullable cast
       parent: json['parent'] as String?,
-      // Nullable cast
       commentCount: json['commentsCount'] as int?,
-      // Nullable cast
       likeCount: json['likesCount'] as int?,
-      // Nullable cast
+      likedByUser: json['likedByUser'] as bool?,
       createdAt: json['createdAt'] as String?,
-      // Nullable cast
-      updatedAt: json['updatedAt'] as String?, // Nullable cast
+      updatedAt: json['updatedAt'] as String?,
     );
   }
 
@@ -50,12 +46,12 @@ class Post {
     return {
       if (author != null) 'author': author,
       'content': content,
-      // Toujours inclus car requis
       if (id != null) 'id': id,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (parent != null) 'parent': parent,
       if (commentCount != null) 'commentCount': commentCount,
       if (likeCount != null) 'likeCount': likeCount,
+      if (likedByUser != null) 'likedByUser': likedByUser,
       if (createdAt != null) 'createdAt': createdAt,
       if (updatedAt != null) 'updatedAt': updatedAt,
     };
@@ -69,9 +65,12 @@ class Post {
     String? parent,
     int? commentCount,
     int? likeCount,
+    bool? likedByUser,
     String? createdAt,
     String? updatedAt,
-  }) {
+  })
+  {
+    print("$Post");
     return Post(
       author: author ?? this.author,
       content: content ?? this.content,
@@ -80,6 +79,7 @@ class Post {
       parent: parent ?? this.parent,
       commentCount: commentCount ?? this.commentCount,
       likeCount: likeCount ?? this.likeCount,
+      likedByUser: likedByUser ?? this.likedByUser,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

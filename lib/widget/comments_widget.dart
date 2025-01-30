@@ -112,6 +112,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     handle: comment.author?.username ?? '',
                     likes: comment.likeCount ?? 0,
                     comments: comment.commentCount ?? 0,
+                    likedByUser: comment.likedByUser ?? false,
+
                   );
                 }
                 if (!hasMoreData) {

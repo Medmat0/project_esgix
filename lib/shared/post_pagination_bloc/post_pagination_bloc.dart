@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import '../../app_exception.dart';
 import '../../model/post.dart';
 import '../../services/posts/posts_repository/posts_repository.dart';
+import '../../singleton/session_manager.dart';
 
 part 'post_pagination_event.dart';
 part 'post_pagination_state.dart';
@@ -52,12 +53,13 @@ class PostPaginationBloc extends Bloc<PostPaginationEvent, PostPaginationState> 
     }
   }
 
-  Future<void> _onOffsetPagePost(PostPaginationOffsetEvent event, Emitter<PostPaginationState> emit,
-      ) async {
+  Future<void> _onOffsetPagePost(PostPaginationOffsetEvent event, Emitter<PostPaginationState> emit) async {
     emit(state.copyWith(status: PostPaginationStatus.loading));
 
     try {
-      final posts = await postsRepository.getPostByOffset(event.page, event.offset);
+      final String? userId = SessionManager.instance.getUserId();
+
+      final posts = await postsRepository.getPostsWithLikedStatus(event.page, event.offset, userId);
 
       final hasMoreData = posts.isNotEmpty;
 

@@ -22,7 +22,7 @@ class TweetWidget extends StatefulWidget {
   final String content;
   final int likes;
   final int comments;
-
+  final bool likedByUser;
 
   const TweetWidget({
     super.key,
@@ -35,6 +35,7 @@ class TweetWidget extends StatefulWidget {
     required this.content,
     required this.likes,
     required this.comments,
+    required this.likedByUser,
     this.imageUrl,
   });
 
@@ -49,11 +50,15 @@ class TweetWidgetState extends State<TweetWidget> {
   bool isCommented = false;
 
   @override
+  @override
   void initState() {
     super.initState();
     likes = widget.likes;
     comments = widget.comments;
+    isLiked = widget.likedByUser;
+    print("like ou pas $isLiked");
   }
+
 
   @override
   void dispose() {
@@ -180,18 +185,21 @@ class TweetWidgetState extends State<TweetWidget> {
   }
 
   void _handleLike() {
-    if( SessionManager.instance.hasToken == false){
+    if (!SessionManager.instance.hasToken) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("You must be logged in to like")),
       );
       return;
     }
+
     BlocProvider.of<PostBloc>(context).add(PostLikeEvent(id: widget.id));
+
     setState(() {
       isLiked = !isLiked;
       likes += isLiked ? 1 : -1;
     });
   }
+
 
   void _handleComment() {
     ScreenAddPost.navigateTo(context, widget.id);

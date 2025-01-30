@@ -95,6 +95,8 @@ class ScreenSearchState extends State<ScreenSearch> {
                           comments: state.posts[index].commentCount ?? 0,
                           imageUrl: state.posts[index].imageUrl,
                           userId: state.posts[index].author!.id ?? '',
+                          likedByUser: state.posts[index].likedByUser ?? false,
+
                         );
                       },
                     );
