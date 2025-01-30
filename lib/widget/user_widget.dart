@@ -11,7 +11,13 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: GestureDetector(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
         onTap: () {
           ScreenProfileEveryone.navigateTo(
             context,
@@ -19,33 +25,54 @@ class UserWidget extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Row(
             children: [
-              CircleAvatar(
-                backgroundImage: user.avatar.isNotEmpty
-                    ? NetworkImage(user.avatar)
-                    : const AssetImage('assets/egg.jpeg') as ImageProvider,
+
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.blue,
+                    width: 2,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 24,
+                  backgroundImage: user.avatar.isNotEmpty
+                      ? NetworkImage(user.avatar)
+                      : const AssetImage('assets/egg.jpeg') as ImageProvider,
+                ),
               ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.username,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Text(
+                      user.username,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    user.description ?? '',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    const SizedBox(height: 4),
+
+                    Text(
+                      user.description ?? 'No description available',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
