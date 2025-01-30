@@ -40,7 +40,7 @@ class OneTweetState extends State<OneTweetWidget> {
         }
 
         final post = state.post!;
-        return Expanded(
+        return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -56,7 +56,6 @@ class OneTweetState extends State<OneTweetWidget> {
                 imageUrl: post.imageUrl,
                 userId: post.author?.id ?? '',
                 likedByUser: post.likedByUser ?? false,
-
               ),
             ],
           ),
