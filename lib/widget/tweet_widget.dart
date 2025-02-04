@@ -50,15 +50,12 @@ class TweetWidgetState extends State<TweetWidget> {
   bool isCommented = false;
 
   @override
-  @override
   void initState() {
     super.initState();
     likes = widget.likes;
     comments = widget.comments;
     isLiked = widget.likedByUser;
-    print("like ou pas $isLiked");
   }
-
 
   @override
   void dispose() {
@@ -142,10 +139,8 @@ class TweetWidgetState extends State<TweetWidget> {
                           ],
                         ),
                         const SizedBox(height: 5),
-                        if (widget.imageUrl != null &&
-                            widget.imageUrl!.isNotEmpty &&
-                            _isImageUrl(widget.imageUrl!))
-                          Image.network(widget.imageUrl!),
+                        if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+                          _buildImage(widget.imageUrl!),
                         Text(widget.content),
                         const SizedBox(height: 10),
                         Row(
@@ -179,73 +174,18 @@ class TweetWidgetState extends State<TweetWidget> {
     );
   }
 
-  bool _isImageUrl(String url) {
-    final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-    return imageExtensions.contains(url.split('.').last.toLowerCase());
-  }
-
-  void _handleLike() {
-    if (!SessionManager.instance.hasToken) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You must be logged in to like")),
-      );
-      return;
-    }
-
-    BlocProvider.of<PostBloc>(context).add(PostLikeEvent(id: widget.id));
-
-    setState(() {
-      isLiked = !isLiked;
-      likes += isLiked ? 1 : -1;
-    });
-  }
-
-
-  void _handleComment() {
-    ScreenAddPost.navigateTo(context, widget.id);
-    setState(() {
-      isCommented = !isCommented;
-      comments += isCommented ? 1 : -1;
-    });
-  }
-
-  void _longPressLike() {
-    ScreenPeopleLikePost.navigateTo(context, widget.id);
-  }
-
-  void _longPressComment() {
-    ScreenAddPost.navigateTo(context, widget.id);
-  }
-
-  void _deletePost() {
-    BlocProvider.of<PostManagementBloc>(context).add(PostManagementDeleteEvent(idPost: widget.id));
-  }
-
-  void _updatePost() {
-    ScreenModifyPost.navigateTo(context, widget.id);
-  }
-
-  Widget _buildTwoButtonIfConnected() {
-    if (SessionManager.instance.hasToken == false ||  widget.userId != SessionManager.instance.getUserId()) {
-      return const SizedBox.shrink();
-    }
-    return Row(
-      children: [
-        IconButton(
-            onPressed: _deletePost,
-            icon: const Icon(
-                Icons.delete,
-                color: Colors.red,
-            ),
-        ),
-        IconButton(
-          onPressed: _updatePost,
-          icon: const Icon(
-            Icons.update,
-            color: Colors.grey,
-          ),
-        ),
-      ],
+  Widget _buildImage(String imageUrl) {
+    return Image.network(
+      imageUrl,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return const Icon(Icons.broken_image);
+      },
     );
   }
 
@@ -274,6 +214,82 @@ class TweetWidgetState extends State<TweetWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  void _handleLike() {
+    if (!SessionManager.instance.hasToken) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("You must be logged in to like")),
+      );
+      return;
+    }
+
+    BlocProvider.of<PostBloc>(context).add(PostLikeEvent(id: widget.id));
+
+    setState(() {
+      isLiked = !isLiked;
+      likes += isLiked ? 1 : -1;
+    });
+  }
+
+  // Handle comment interaction
+  void _handleComment() {
+    ScreenAddPost.navigateTo(context, widget.id);
+    setState(() {
+      isCommented = !isCommented;
+      comments += isCommented ? 1 : -1;
+    });
+  }
+
+  void _longPressLike() {
+    ScreenPeopleLikePost.navigateTo(context, widget.id);
+  }
+
+  void _longPressComment() {
+    ScreenAddPost.navigateTo(context, widget.id);
+  }
+
+  void _deletePost() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    BlocProvider.of<PostManagementBloc>(context).add(PostManagementDeleteEvent(idPost: widget.id));
+  }
+
+
+  void _updatePost() {
+    ScreenModifyPost.navigateTo(context, widget.id);
+  }
+
+  Widget _buildTwoButtonIfConnected() {
+    if (SessionManager.instance.hasToken == false ||  widget.userId != SessionManager.instance.getUserId()) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      children: [
+        IconButton(
+          onPressed: _deletePost,
+          icon: const Icon(
+            Icons.delete,
+            color: Colors.red,
+          ),
+        ),
+        IconButton(
+          onPressed: _updatePost,
+          icon: const Icon(
+            Icons.update,
+            color: Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 }

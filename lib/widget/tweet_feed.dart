@@ -97,7 +97,6 @@
                 itemBuilder: (context, index) {
                   if (index < state.posts.length) {
                     final post = state.posts[index];
-                    print("post like ? ${post.likedByUser}");
                     return TweetWidget(
                       key: ValueKey(post.id),
                       id: post.id ?? '',
@@ -149,13 +148,13 @@
 
     void loadMorePosts() {
       if (!mounted || isLoading || !hasMoreData) return;
-
+      print("Loading more posts...");
       setState(() {
         isLoading = true;
       });
 
       context.read<PostPaginationBloc>().add(PostPaginationOffsetEvent(
-        offset: currentPage * 10,
+        offset: 10,
         page: currentPage,
       ));
     }

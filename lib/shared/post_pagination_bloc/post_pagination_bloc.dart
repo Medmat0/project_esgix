@@ -59,7 +59,10 @@ class PostPaginationBloc extends Bloc<PostPaginationEvent, PostPaginationState> 
     try {
       final String? userId = SessionManager.instance.getUserId();
 
+
       final posts = await postsRepository.getPostsWithLikedStatus(event.page, event.offset, userId);
+
+
 
       final hasMoreData = posts.isNotEmpty;
 

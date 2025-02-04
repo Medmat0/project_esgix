@@ -82,12 +82,16 @@ class ApiPostsDataSource implements PostsDataSource {
   @override
   Future<List<Post>> getPostByOffset(int page, int offset) async {
     final dio = makeTheHeader();
+    print("offset : $offset  , page : $page");
+
     final response = await dio.get(
       "${dotenv.env['BASE_URL']}posts?page=$page&offset=$offset",
     );
+
     final statusCode = response.statusCode;
     if (statusCode != 200) whatTypeOfError(statusCode!);
     final jsonList = response.data['data'] as List;
+    print("this is results of response : $jsonList");
     return jsonList.map((jsonElement) => Post.fromJson(jsonElement)).toList();
   }
 
