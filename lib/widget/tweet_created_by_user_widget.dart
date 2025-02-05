@@ -58,7 +58,7 @@ class TweetCreatedByUserState extends State<TweetCreatedByUserWidget> {
 
   Widget _buildTweetCreatedByUserWidget(List<Post> posts) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height, // Provide explicit height
+      height: MediaQuery.of(context).size.height,
       child: ListView.builder(
         itemCount: posts.length + (_isLoading ? 1 : 0),
         itemBuilder: (context, index) {
@@ -76,6 +76,8 @@ class TweetCreatedByUserState extends State<TweetCreatedByUserWidget> {
               imageUrl: post.imageUrl ?? '',
               userId: post.author?.id ?? '',
               likedByUser: post.likedByUser ?? false, // Ajout ici
+              parent: post.parent, // Passez le parent ici
+
 
             );
           }

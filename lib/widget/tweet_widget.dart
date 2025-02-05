@@ -10,6 +10,7 @@ import '../screen/screen_tweet.dart';
 import '../shared/post_bloc/post_bloc.dart';
 import '../screen/login_view_screen.dart';
 import '../shared/post_management_bloc/post_management_bloc.dart';
+import '../shared/post_other_bloc/post_other_bloc.dart';
 
 class TweetWidget extends StatefulWidget {
   final String id;
@@ -23,6 +24,7 @@ class TweetWidget extends StatefulWidget {
   final int likes;
   final int comments;
   final bool likedByUser;
+  final String? parent;
 
   const TweetWidget({
     super.key,
@@ -37,6 +39,7 @@ class TweetWidget extends StatefulWidget {
     required this.comments,
     required this.likedByUser,
     this.imageUrl,
+    this.parent
   });
 
   @override
@@ -64,6 +67,9 @@ class TweetWidgetState extends State<TweetWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isComment = widget.parent != null && widget.parent!.isNotEmpty;
+
+
     return BlocListener<PostBloc, PostState>(
       listener: (context, state) {
         if (state.status == PostBlocStatus.error) {
@@ -92,7 +98,13 @@ class TweetWidgetState extends State<TweetWidget> {
         child: Card(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => ScreenTweet.navigateTo(context, widget.id),
+            onTap: () => {
+            if (isComment) {
+              ScreenTweet.navigateTo(context, widget.parent!)
+            } else {
+                ScreenTweet.navigateTo(context, widget.id)
+        }
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -141,6 +153,11 @@ class TweetWidgetState extends State<TweetWidget> {
                         const SizedBox(height: 5),
                         if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
                           _buildImage(widget.imageUrl!),
+                        if (isComment)
+                          const Text(
+                            'Response for a tweet',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
                         Text(widget.content),
                         const SizedBox(height: 10),
                         Row(
@@ -235,7 +252,14 @@ class TweetWidgetState extends State<TweetWidget> {
 
   // Handle comment interaction
   void _handleComment() {
-    ScreenAddPost.navigateTo(context, widget.id);
+    ScreenAddPost.navigateTo(context, widget.id).then((_) {
+      context.read<PostOtherBloc>().add(GetCommentsPostEvent(
+        idPost: widget.id,
+        page: 0,
+        offset: 0,
+      ));
+    });
+
     setState(() {
       isCommented = !isCommented;
       comments += isCommented ? 1 : -1;
