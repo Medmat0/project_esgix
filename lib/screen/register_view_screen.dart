@@ -70,41 +70,19 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _register() async {
-    final username = _usernameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-    final bio = _bioController.text.trim();
 
-    if (username.isEmpty || email.isEmpty || bio.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All fields are required.'),
-          backgroundColor: Colors.red,
-        ),
+
+    if (_validateInputs()) {
+      final user = User(
+        username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        avatar: _avatarUrl,
+        description: _bioController.text.trim(),
       );
-      return;
+
+      context.read<UserManagementBloc>().add(UserRegisterEvent(user: user));
     }
-
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    final user = User(
-      username: _usernameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      avatar: _avatarUrl,
-      description: _bioController.text.trim(),
-    );
-
-    context.read<UserManagementBloc>().add(UserRegisterEvent(user: user));
   }
 
   @override
